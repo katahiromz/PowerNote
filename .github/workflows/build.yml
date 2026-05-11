@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        toolset: ['14.2', '14.1'] # VS 2019 and 2017 (see below)
+        toolset: ['14.2'] # VS 2019 (see below)
         config: [Debug, Release]
       fail-fast: false
     runs-on: ${{matrix.os}}
