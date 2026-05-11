@@ -17,9 +17,9 @@ static VOID AlertPrintError(VOID)
 {
     TCHAR szUntitled[MAX_STRING_LEN];
 
-    LoadString(Globals.hInstance, STRING_UNTITLED, szUntitled, _countof(szUntitled));
+    LoadString(Globals.hInstance, IDS_UNTITLED, szUntitled, _countof(szUntitled));
 
-    DIALOG_StringMsgBox(Globals.hMainWnd, STRING_PRINTERROR,
+    DIALOG_StringMsgBox(Globals.hMainWnd, IDS_PRINTERROR,
                         Globals.szFileName[0] ? Globals.szFileName : szUntitled,
                         MB_ICONEXCLAMATION | MB_OK);
 }
@@ -229,7 +229,7 @@ static BOOL DoPrintBody(PPRINT_DATA pData, DWORD PageCount, BOOL bSkipPage)
     } \
     ichStart = pData->ich; \
     xStart = xLeft; \
-    if (pData->status == STRING_PRINTCANCELING) return FALSE; \
+    if (pData->status == IDS_PRINTCANCELING) return FALSE; \
 } while (0)
 
     /* The drawing-body loop */
@@ -312,7 +312,7 @@ static BOOL DoPrintPage(PPRINT_DATA pData, DWORD PageCount)
     {
         if (StartPage(pPrinter->hDC) <= 0)
         {
-            pData->status = STRING_PRINTFAILED;
+            pData->status = IDS_PRINTFAILED;
             return FALSE;
         }
 
@@ -350,7 +350,7 @@ static BOOL DoPrintPage(PPRINT_DATA pData, DWORD PageCount)
 
         if (EndPage(pPrinter->hDC) <= 0)
         {
-            pData->status = STRING_PRINTFAILED;
+            pData->status = IDS_PRINTFAILED;
             return FALSE;
         }
     }
@@ -400,7 +400,7 @@ static BOOL DoPrintDocument(PPRINT_DATA printData)
 
     if (!DoCreatePrintFonts(pPrinter, printData))
     {
-        printData->status = STRING_PRINTFAILED;
+        printData->status = IDS_PRINTFAILED;
         goto Quit;
     }
 
@@ -413,7 +413,7 @@ static BOOL DoPrintDocument(PPRINT_DATA printData)
     printData->pszText = (LPTSTR)HeapAlloc(GetProcessHeap(), 0, (printData->cchText + 1) * sizeof(TCHAR));
     if (!printData->pszText)
     {
-        printData->status = STRING_PRINTFAILED;
+        printData->status = IDS_PRINTFAILED;
         goto Quit;
     }
 
@@ -428,7 +428,7 @@ static BOOL DoPrintDocument(PPRINT_DATA printData)
     docInfo.lpszDocName = Globals.szFileTitle;
     if (StartDoc(pPrinter->hDC, &docInfo) <= 0)
     {
-        printData->status = STRING_PRINTFAILED;
+        printData->status = IDS_PRINTFAILED;
         goto Quit;
     }
 
@@ -462,20 +462,20 @@ static BOOL DoPrintDocument(PPRINT_DATA printData)
 
     if (EndDoc(pPrinter->hDC) <= 0)
     {
-        printData->status = STRING_PRINTFAILED;
+        printData->status = IDS_PRINTFAILED;
         goto Quit;
     }
 
     ret = TRUE;
-    printData->status = STRING_PRINTCOMPLETE;
+    printData->status = IDS_PRINTCOMPLETE;
 
 Quit:
     DeleteObject(printData->hHeaderFont);
     DeleteObject(printData->hBodyFont);
     if (printData->pszText)
         HeapFree(GetProcessHeap(), 0, printData->pszText);
-    if (printData->status == STRING_PRINTCANCELING)
-        printData->status = STRING_PRINTCANCELED;
+    if (printData->status == IDS_PRINTCANCELING)
+        printData->status = IDS_PRINTCANCELED;
     PostMessage(printData->hwndDlg, PRINTING_MESSAGE, 0, 0);
     return ret;
 }
@@ -484,7 +484,7 @@ static DWORD WINAPI PrintThreadFunc(LPVOID arg)
 {
     PPRINT_DATA pData = (PPRINT_DATA)arg;
     pData->currentPage = 1;
-    pData->status = STRING_NOWPRINTING;
+    pData->status = IDS_NOWPRINTING;
     PostMessage(pData->hwndDlg, PRINTING_MESSAGE, 0, 0);
     return DoPrintDocument(pData);
 }
@@ -509,7 +509,7 @@ DIALOG_Printing_DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             s_hThread = CreateThread(NULL, 0, PrintThreadFunc, s_pData, 0, NULL);
             if (!s_hThread)
             {
-                s_pData->status = STRING_PRINTFAILED;
+                s_pData->status = IDS_PRINTFAILED;
                 EndDialog(hwnd, IDABORT);
             }
             return TRUE;
@@ -517,8 +517,8 @@ DIALOG_Printing_DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case PRINTING_MESSAGE:
             switch (s_pData->status)
             {
-                case STRING_NOWPRINTING:
-                case STRING_PRINTCANCELING:
+                case IDS_NOWPRINTING:
+                case IDS_PRINTCANCELING:
                     StringCchPrintf(szText, _countof(szText), s_szPage, s_pData->currentPage);
                     SetDlgItemText(hwnd, IDC_PRINTING_PAGE, szText);
 
@@ -526,15 +526,15 @@ DIALOG_Printing_DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     SetDlgItemText(hwnd, IDC_PRINTING_STATUS, szText);
                     break;
 
-                case STRING_PRINTCOMPLETE:
-                case STRING_PRINTCANCELED:
-                case STRING_PRINTFAILED:
+                case IDS_PRINTCOMPLETE:
+                case IDS_PRINTCANCELED:
+                case IDS_PRINTFAILED:
                     LoadString(Globals.hInstance, s_pData->status, szText, _countof(szText));
                     SetDlgItemText(hwnd, IDC_PRINTING_STATUS, szText);
 
-                    if (s_pData->status == STRING_PRINTCOMPLETE)
+                    if (s_pData->status == IDS_PRINTCOMPLETE)
                         EndDialog(hwnd, IDOK);
-                    else if (s_pData->status == STRING_PRINTFAILED)
+                    else if (s_pData->status == IDS_PRINTFAILED)
                         EndDialog(hwnd, IDABORT);
                     else
                         EndDialog(hwnd, IDCANCEL);
@@ -543,10 +543,10 @@ DIALOG_Printing_DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_COMMAND:
-            if (LOWORD(wParam) == IDCANCEL && s_pData->status == STRING_NOWPRINTING)
+            if (LOWORD(wParam) == IDCANCEL && s_pData->status == IDS_NOWPRINTING)
             {
                 EnableWindow(GetDlgItem(hwnd, IDCANCEL), FALSE);
-                s_pData->status = STRING_PRINTCANCELING;
+                s_pData->status = IDS_PRINTCANCELING;
                 PostMessage(hwnd, PRINTING_MESSAGE, 0, 0);
             }
             break;
@@ -606,7 +606,7 @@ VOID DIALOG_FilePrint(VOID)
     SetMapMode(printer->hDC, MM_TEXT);
 
     if (DialogBoxParam(Globals.hInstance,
-                       MAKEINTRESOURCE(DIALOG_PRINTING),
+                       MAKEINTRESOURCE(IDD_PRINTING),
                        Globals.hMainWnd,
                        DIALOG_Printing_DialogProc,
                        (LPARAM)printer) == IDABORT)
@@ -616,9 +616,9 @@ VOID DIALOG_FilePrint(VOID)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *           DIALOG_PAGESETUP_Hook
+ *           IDD_PAGESETUP_Hook
  */
-static UINT_PTR CALLBACK DIALOG_PAGESETUP_Hook(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static UINT_PTR CALLBACK IDD_PAGESETUP_Hook(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
@@ -679,8 +679,8 @@ VOID DIALOG_FilePageSetup(VOID)
     page.rtMargin = Globals.lMargins;
     page.hDevMode = Globals.hDevMode;
     page.hDevNames = Globals.hDevNames;
-    page.lpPageSetupTemplateName = MAKEINTRESOURCE(DIALOG_PAGESETUP);
-    page.lpfnPageSetupHook = DIALOG_PAGESETUP_Hook;
+    page.lpPageSetupTemplateName = MAKEINTRESOURCE(IDD_PAGESETUP);
+    page.lpfnPageSetupHook = IDD_PAGESETUP_Hook;
 
     PageSetupDlg(&page);
 

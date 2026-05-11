@@ -21,9 +21,9 @@ VOID NOTEPAD_EnableSearchMenu()
 {
     BOOL bEmpty = (GetWindowTextLengthW(Globals.hEdit) == 0);
     UINT uEnable = MF_BYCOMMAND | (bEmpty ? MF_GRAYED : MF_ENABLED);
-    EnableMenuItem(Globals.hMenu, CMD_SEARCH, uEnable);
-    EnableMenuItem(Globals.hMenu, CMD_SEARCH_NEXT, uEnable);
-    EnableMenuItem(Globals.hMenu, CMD_SEARCH_PREV, uEnable);
+    EnableMenuItem(Globals.hMenu, IDC_SEARCH, uEnable);
+    EnableMenuItem(Globals.hMenu, IDC_SEARCH_NEXT, uEnable);
+    EnableMenuItem(Globals.hMenu, IDC_SEARCH_PREV, uEnable);
 }
 
 /***********************************************************************
@@ -50,36 +50,36 @@ static int NOTEPAD_MenuCommand(WPARAM wParam)
 {
     switch (wParam)
     {
-    case CMD_NEW:        DIALOG_FileNew(); break;
-    case CMD_NEW_WINDOW: DIALOG_FileNewWindow(); break;
-    case CMD_OPEN:       DIALOG_FileOpen(); break;
-    case CMD_SAVE:       DIALOG_FileSave(); break;
-    case CMD_SAVE_AS:    DIALOG_FileSaveAs(); break;
-    case CMD_PRINT:      DIALOG_FilePrint(); break;
-    case CMD_PAGE_SETUP: DIALOG_FilePageSetup(); break;
-    case CMD_EXIT:       DIALOG_FileExit(); break;
+    case IDC_NEW:        DIALOG_FileNew(); break;
+    case IDC_NEW_WINDOW: DIALOG_FileNewWindow(); break;
+    case IDC_OPEN:       DIALOG_FileOpen(); break;
+    case IDC_SAVE:       DIALOG_FileSave(); break;
+    case IDC_SAVE_AS:    DIALOG_FileSaveAs(); break;
+    case IDC_PRINT:      DIALOG_FilePrint(); break;
+    case IDC_PAGE_SETUP: DIALOG_FilePageSetup(); break;
+    case IDC_EXIT:       DIALOG_FileExit(); break;
 
-    case CMD_UNDO:       DIALOG_EditUndo(); break;
-    case CMD_CUT:        DIALOG_EditCut(); break;
-    case CMD_COPY:       DIALOG_EditCopy(); break;
-    case CMD_PASTE:      DIALOG_EditPaste(); break;
-    case CMD_DELETE:     DIALOG_EditDelete(); break;
-    case CMD_SELECT_ALL: DIALOG_EditSelectAll(); break;
-    case CMD_TIME_DATE:  DIALOG_EditTimeDate(); break;
+    case IDC_UNDO:       DIALOG_EditUndo(); break;
+    case IDC_CUT:        DIALOG_EditCut(); break;
+    case IDC_COPY:       DIALOG_EditCopy(); break;
+    case IDC_PASTE:      DIALOG_EditPaste(); break;
+    case IDC_DELETE:     DIALOG_EditDelete(); break;
+    case IDC_SELECT_ALL: DIALOG_EditSelectAll(); break;
+    case IDC_TIME_DATE:  DIALOG_EditTimeDate(); break;
 
-    case CMD_SEARCH:      DIALOG_Search(); break;
-    case CMD_SEARCH_NEXT: DIALOG_SearchNext(TRUE); break;
-    case CMD_REPLACE:     DIALOG_Replace(); break;
-    case CMD_GOTO:        DIALOG_GoTo(); break;
-    case CMD_SEARCH_PREV: DIALOG_SearchNext(FALSE); break;
+    case IDC_SEARCH:      DIALOG_Search(); break;
+    case IDC_SEARCH_NEXT: DIALOG_SearchNext(TRUE); break;
+    case IDC_REPLACE:     DIALOG_Replace(); break;
+    case IDC_GOTO:        DIALOG_GoTo(); break;
+    case IDC_SEARCH_PREV: DIALOG_SearchNext(FALSE); break;
 
-    case CMD_WRAP: DIALOG_EditWrap(); break;
-    case CMD_FONT: DIALOG_SelectFont(); break;
+    case IDC_WRAP: DIALOG_EditWrap(); break;
+    case IDC_FONT: DIALOG_SelectFont(); break;
 
-    case CMD_STATUSBAR: DIALOG_ViewStatusBar(); break;
+    case IDC_STATUSBAR: DIALOG_ViewStatusBar(); break;
 
-    case CMD_HELP_CONTENTS: DIALOG_HelpContents(); break;
-    case CMD_HELP_ABOUT_NOTEPAD: DIALOG_HelpAboutNotepad(); break;
+    case IDC_HELP_CONTENTS: DIALOG_HelpContents(); break;
+    case IDC_HELP_ABOUT_NOTEPAD: DIALOG_HelpAboutNotepad(); break;
 
     default:
         break;
@@ -201,9 +201,9 @@ BOOL NOTEPAD_FindNext(FINDREPLACE *pFindReplace, BOOL bReplace, BOOL bShowAlert)
         /* Can't find target */
         if (bShowAlert)
         {
-            LoadString(Globals.hInstance, STRING_CANNOTFIND, szResource, _countof(szResource));
+            LoadString(Globals.hInstance, IDS_CANNOTFIND, szResource, _countof(szResource));
             StringCchPrintf(szText, _countof(szText), szResource, pFindReplace->lpstrFindWhat);
-            LoadString(Globals.hInstance, STRING_NOTEPAD, szResource, _countof(szResource));
+            LoadString(Globals.hInstance, IDS_NOTEPAD, szResource, _countof(szResource));
             MessageBox(Globals.hFindReplaceDlg, szText, szResource, MB_OK);
         }
         bSuccess = FALSE;
@@ -251,11 +251,11 @@ static VOID NOTEPAD_InitData(HINSTANCE hInstance)
     Globals.encFile = ENCODING_DEFAULT;
 
     p = Globals.szFilter;
-    p += LoadString(Globals.hInstance, STRING_TEXT_FILES_TXT, p, MAX_STRING_LEN) + 1;
+    p += LoadString(Globals.hInstance, IDS_TEXT_FILES_TXT, p, MAX_STRING_LEN) + 1;
     _tcscpy(p, txt_files);
     p += _countof(txt_files);
 
-    p += LoadString(Globals.hInstance, STRING_ALL_FILES, p, MAX_STRING_LEN) + 1;
+    p += LoadString(Globals.hInstance, IDS_ALL_FILES, p, MAX_STRING_LEN) + 1;
     _tcscpy(p, all_files);
     p += _countof(all_files);
     *p = '\0';
@@ -275,19 +275,19 @@ static VOID NOTEPAD_InitMenuPopup(HMENU menu, LPARAM index)
 
     UNREFERENCED_PARAMETER(index);
 
-    CheckMenuItem(menu, CMD_WRAP, (Globals.bWrapLongLines ? MF_CHECKED : MF_UNCHECKED));
-    CheckMenuItem(menu, CMD_STATUSBAR, (Globals.bShowStatusBar ? MF_CHECKED : MF_UNCHECKED));
-    EnableMenuItem(menu, CMD_UNDO,
+    CheckMenuItem(menu, IDC_WRAP, (Globals.bWrapLongLines ? MF_CHECKED : MF_UNCHECKED));
+    CheckMenuItem(menu, IDC_STATUSBAR, (Globals.bShowStatusBar ? MF_CHECKED : MF_UNCHECKED));
+    EnableMenuItem(menu, IDC_UNDO,
         SendMessage(Globals.hEdit, EM_CANUNDO, 0, 0) ? MF_ENABLED : MF_GRAYED);
-    EnableMenuItem(menu, CMD_PASTE,
+    EnableMenuItem(menu, IDC_PASTE,
         IsClipboardFormatAvailable(CF_TEXT) ? MF_ENABLED : MF_GRAYED);
     SendMessage(Globals.hEdit, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
     enable = ((dwStart == dwEnd) ? MF_GRAYED : MF_ENABLED);
-    EnableMenuItem(menu, CMD_CUT, enable);
-    EnableMenuItem(menu, CMD_COPY, enable);
-    EnableMenuItem(menu, CMD_DELETE, enable);
+    EnableMenuItem(menu, IDC_CUT, enable);
+    EnableMenuItem(menu, IDC_COPY, enable);
+    EnableMenuItem(menu, IDC_DELETE, enable);
 
-    EnableMenuItem(menu, CMD_SELECT_ALL,
+    EnableMenuItem(menu, IDC_SELECT_ALL,
         GetWindowTextLength(Globals.hEdit) ? MF_ENABLED : MF_GRAYED);
 }
 
@@ -345,7 +345,7 @@ NOTEPAD_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         DIALOG_FileNew(); /* Initialize file info */
 
         // For now, the "Help" dialog is disabled due to the lack of HTML Help support
-        EnableMenuItem(Globals.hMenu, CMD_HELP_CONTENTS, MF_BYCOMMAND | MF_GRAYED);
+        EnableMenuItem(Globals.hMenu, IDC_HELP_CONTENTS, MF_BYCOMMAND | MF_GRAYED);
         break;
 
     case WM_COMMAND:
@@ -455,7 +455,7 @@ NOTEPAD_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 static int AlertFileDoesNotExist(LPCTSTR szFileName)
 {
-    return DIALOG_StringMsgBox(Globals.hMainWnd, STRING_DOESNOTEXIST,
+    return DIALOG_StringMsgBox(Globals.hMainWnd, IDS_DOESNOTEXIST,
                                szFileName,
                                MB_ICONEXCLAMATION | MB_YESNO);
 }
@@ -585,7 +585,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE prev, LPTSTR cmdline, int sh
     wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_NPICON));
     wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
     wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wndclass.lpszMenuName = MAKEINTRESOURCE(MAIN_MENU);
+    wndclass.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN_MENU);
     wndclass.lpszClassName = className;
     wndclass.hIconSm = (HICON)LoadImage(hInstance,
                                         MAKEINTRESOURCE(IDI_NPICON),

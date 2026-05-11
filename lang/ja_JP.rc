@@ -8,59 +8,59 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 //////////////////////////////////////////////////////////////////////////////
 // RT_MENU
 
-513 MENU
+IDR_MAIN_MENU MENU
 {
     POPUP "ファイル(&F)"
     {
-        MENUITEM "新規作成(&N)\tCtrl+N", 256
-        MENUITEM "新規ウィンドウ(&W)\tCtrl+Shift+N", 257
-        MENUITEM "開く(&O)...\tCtrl+O", 258
-        MENUITEM "上書き保存(&S)\tCtrl+S", 259
-        MENUITEM "名前を付けて保存(&A)...", 260
+        MENUITEM "新規作成(&N)\tCtrl+N", IDC_NEW
+        MENUITEM "新規ウィンドウ(&W)\tCtrl+Shift+N", IDC_NEW_WINDOW
+        MENUITEM "開く(&O)...\tCtrl+O", IDC_OPEN
+        MENUITEM "上書き保存(&S)\tCtrl+S", IDC_SAVE
+        MENUITEM "名前を付けて保存(&A)...", IDC_SAVE_AS
         MENUITEM SEPARATOR
-        MENUITEM "ページ設定(&T)...", 262
-        MENUITEM "印刷(&P)...\tCtrl+P", 261
+        MENUITEM "ページ設定(&T)...", IDC_PAGE_SETUP
+        MENUITEM "印刷(&P)...\tCtrl+P", IDC_PRINT
         MENUITEM SEPARATOR
-        MENUITEM "メモ帳の終了(&X)", 264
+        MENUITEM "メモ帳の終了(&X)", IDC_EXIT
     }
     POPUP "編集(&E)"
     {
-        MENUITEM "元に戻す(&U)\tCtrl+Z", 272
+        MENUITEM "元に戻す(&U)\tCtrl+Z", IDC_UNDO
         MENUITEM SEPARATOR
-        MENUITEM "切り取り(&T)\tCtrl+X", 273
-        MENUITEM "コピー(&C)\tCtrl+C", 274
-        MENUITEM "貼り付け(&P)\tCtrl+V", 275
-        MENUITEM "削除(&D)\tDel", 276
+        MENUITEM "切り取り(&T)\tCtrl+X", IDC_CUT
+        MENUITEM "コピー(&C)\tCtrl+C", IDC_COPY
+        MENUITEM "貼り付け(&P)\tCtrl+V", IDC_PASTE
+        MENUITEM "削除(&D)\tDel", IDC_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "検索(&F)...\tCtrl+F", 288
-        MENUITEM "次を検索(&S)\tF3", 289
-        MENUITEM "置換...\tCtrl+H", 290
-        MENUITEM "行へ移動...\tCtrl+G", 291
+        MENUITEM "検索(&F)...\tCtrl+F", IDC_SEARCH
+        MENUITEM "次を検索(&S)\tF3", IDC_SEARCH_NEXT
+        MENUITEM "置換...\tCtrl+H", IDC_REPLACE
+        MENUITEM "行へ移動...\tCtrl+G", IDC_GOTO
         MENUITEM SEPARATOR
-        MENUITEM "すべて選択(&A)\tCtrl+A", 278
-        MENUITEM "日付と時刻(&T)\tF5", 279
+        MENUITEM "すべて選択(&A)\tCtrl+A", IDC_SELECT_ALL
+        MENUITEM "日付と時刻(&T)\tF5", IDC_TIME_DATE
     }
     POPUP "書式(&O)"
     {
-        MENUITEM "右端で折り返す(&W)", 281
-        MENUITEM "フォント(&F)...", 320
+        MENUITEM "右端で折り返す(&W)", IDC_WRAP
+        MENUITEM "フォント(&F)...", IDC_FONT
     }
     POPUP "表示(&V)"
     {
-        MENUITEM "ステータス バー(&B)", 336
+        MENUITEM "ステータス バー(&B)", IDC_STATUSBAR
     }
     POPUP "ヘルプ(&H)"
     {
-        MENUITEM "目次(&C)", 304
+        MENUITEM "目次(&C)", IDC_HELP_CONTENTS
         MENUITEM SEPARATOR
-        MENUITEM "メモ帳について(&A)", 309
+        MENUITEM "メモ帳について(&A)", IDC_HELP_ABOUT_NOTEPAD
     }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // RT_DIALOG
 
-514 DIALOGEX 0, 0, 365, 193
+IDD_PAGESETUP DIALOGEX 0, 0, 365, 193
 CAPTION "ページ設定"
 STYLE DS_CONTEXTHELP | DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_SYSMENU
 FONT 9, "MS UI Gothic", 0, 0, 1
@@ -86,7 +86,7 @@ FONT 9, "MS UI Gothic", 0, 0, 1
     EDITTEXT edt5, 119, 100, 36, 12, WS_GROUP
     LTEXT "下(&B):", stc18, 159, 102, 30, 8
     EDITTEXT edt7, 190, 100, 36, 12, WS_GROUP
-    LTEXT "ヘッダー(&H):", 320, 8, 132, 40, 15
+    LTEXT "ヘッダー(&H):", IDC_FONT, 8, 132, 40, 15
     EDITTEXT 321, 58, 130, 173, 12, ES_AUTOHSCROLL
     LTEXT "フッター(&F):", 322, 8, 149, 40, 15
     EDITTEXT 323, 58, 147, 173, 12, ES_AUTOHSCROLL
@@ -96,7 +96,7 @@ FONT 9, "MS UI Gothic", 0, 0, 1
     PUSHBUTTON "プリンタ(&R)...", psh3, 310, 170, 50, 14
 }
 
-516 DIALOGEX 0, 0, 256, 44
+IDD_ENCODING DIALOGEX 0, 0, 256, 44
 CAPTION "エンコーディング"
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 FONT 9, "MS UI Gothic", 0, 0, 1
@@ -107,7 +107,7 @@ FONT 9, "MS UI Gothic", 0, 0, 1
     LTEXT "改行コード:", 342, 65, 20, 41, 12
 }
 
-519 DIALOGEX 0, 0, 165, 50
+IDD_GOTO DIALOGEX 0, 0, 165, 50
 CAPTION "行へ移動"
 STYLE DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_SYSMENU
 FONT 9, "MS UI Gothic", 0, 0, 1
@@ -118,7 +118,7 @@ FONT 9, "MS UI Gothic", 0, 0, 1
     PUSHBUTTON "キャンセル", IDCANCEL, 120, 30, 40, 15
 }
 
-523 DIALOG 0, 0, 160, 100
+IDD_PRINTING DIALOG 0, 0, 160, 100
 CAPTION "印刷中"
 STYLE DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_SYSMENU
 FONT 9, "MS UI Gothic"
@@ -134,22 +134,22 @@ FONT 9, "MS UI Gothic"
 
 515 ACCELERATORS
 {
-    "A", 278, CONTROL, VIRTKEY
-    "C", 274, CONTROL, VIRTKEY
-    "F", 288, CONTROL, VIRTKEY
-    "G", 291, CONTROL, VIRTKEY
-    "H", 290, CONTROL, VIRTKEY
-    "N", 256, CONTROL, VIRTKEY
-    "N", 257, CONTROL, SHIFT, VIRTKEY
-    "O", 258, CONTROL, VIRTKEY
-    "P", 261, CONTROL, VIRTKEY
-    "S", 259, CONTROL, VIRTKEY
-    "V", 275, CONTROL, VIRTKEY
-    "X", 273, CONTROL, VIRTKEY
-    "Z", 272, CONTROL, VIRTKEY
-    VK_F3, 289, VIRTKEY
-    VK_F3, 292, SHIFT, VIRTKEY
-    VK_F5, 279, VIRTKEY
+    "A", IDC_SELECT_ALL, CONTROL, VIRTKEY
+    "C", IDC_COPY, CONTROL, VIRTKEY
+    "F", IDC_SEARCH, CONTROL, VIRTKEY
+    "G", IDC_GOTO, CONTROL, VIRTKEY
+    "H", IDC_REPLACE, CONTROL, VIRTKEY
+    "N", IDC_NEW, CONTROL, VIRTKEY
+    "N", IDC_NEW_WINDOW, CONTROL, SHIFT, VIRTKEY
+    "O", IDC_OPEN, CONTROL, VIRTKEY
+    "P", IDC_PRINT, CONTROL, VIRTKEY
+    "S", IDC_SAVE, CONTROL, VIRTKEY
+    "V", IDC_PASTE, CONTROL, VIRTKEY
+    "X", IDC_CUT, CONTROL, VIRTKEY
+    "Z", IDC_UNDO, CONTROL, VIRTKEY
+    VK_F3, IDC_SEARCH_NEXT, VIRTKEY
+    VK_F3, IDC_SEARCH_PREV, SHIFT, VIRTKEY
+    VK_F5, IDC_TIME_DATE, VIRTKEY
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -157,41 +157,41 @@ FONT 9, "MS UI Gothic"
 
 STRINGTABLE
 {
-    352, "&f"
-    353, "ページ &p"
-    368, "Power Notepad"
-    369, "エラー"
-    370, "警告"
-    371, "情報"
-    372, "無題"
-    373, "すべてのファイル (*.*)"
-    374, "テキスト ファイル (*.txt)"
-    375, "ファイル '%s' のサイズは大きすぎるため、メモ帳では編集できません。\n別のエディタを使用して下さい。"
-    376, "何も入力されていません。\n何か入力してから実行して下さい。"
-    377, "ファイル '%s'\nは存在しません\n\n新しいファイルを作成しますか?"
-    378, "ファイル '%s'\nは変更されています\n\n変更を保存しますか?"
-    379, "'%s' は見つかりませんでした"
-    380, "この操作を実行するためのメモリが足りません。\nメモリの空きを増やすためにいくつかのアプリケーションを\n終了して下さい。"
-    381, "'%s' が見つかりませんでした。"
-    384, "ANSI"
-    385, "Unicode"
-    386, "Unicode (big endian)"
-    387, "UTF-8"
-    388, "UTF-8 with BOM"
-    389, "Windows (CR + LF)"
-    390, "Unix (LF)"
-    391, "Mac (CR)"
-    392, "%d 行、%d 列"
-    393, "ファイル '%s'を印刷できません。\n\nプリンタがオンになっていて、正しく設定されているか確認して下さい。"
-    394, "ＭＳ ゴシック"
-    395, "指定された行番号は範囲外です。"
-    396, "印刷中..."
-    397, "印刷ジョブをキャンセル中..."
-    398, "印刷が完了しました。"
-    399, "印刷がキャンセルされました。"
-    400, "印刷が失敗しました。"
-    512, "テキスト文書"
-    768, "Copyright 1997,98 Marcel Baur, 2000 Mike McCormack, 2002 Sylvain Petreolle, 2002 Andriy Palamarchuk\r\n"
+    IDS_PAGESETUP_HEADERVALUE, "&f"
+    IDS_PAGESETUP_FOOTERVALUE, "ページ &p"
+    IDS_NOTEPAD, "Power Notepad"
+    IDS_ERROR, "エラー"
+    IDS_WARNING, "警告"
+    IDS_INFO, "情報"
+    IDS_UNTITLED, "無題"
+    IDS_ALL_FILES, "すべてのファイル (*.*)"
+    IDS_TEXT_FILES_TXT, "テキスト ファイル (*.txt)"
+    IDS_TOOLARGE, "ファイル '%s' のサイズは大きすぎるため、メモ帳では編集できません。\n別のエディタを使用して下さい。"
+    IDS_NOTEXT, "何も入力されていません。\n何か入力してから実行して下さい。"
+    IDS_DOESNOTEXIST, "ファイル '%s'\nは存在しません\n\n新しいファイルを作成しますか?"
+    IDS_NOTSAVED, "ファイル '%s'\nは変更されています\n\n変更を保存しますか?"
+    IDS_NOTFOUND, "'%s' は見つかりませんでした"
+    IDS_OUT_OF_MEMORY, "この操作を実行するためのメモリが足りません。\nメモリの空きを増やすためにいくつかのアプリケーションを\n終了して下さい。"
+    IDS_CANNOTFIND, "'%s' が見つかりませんでした。"
+    IDS_ANSI, "ANSI"
+    IDS_UNICODE, "Unicode"
+    IDS_UNICODE_BE, "Unicode (big endian)"
+    IDS_UTF8, "UTF-8"
+    IDS_UTF8_BOM, "UTF-8 with BOM"
+    IDS_CRLF, "Windows (CR + LF)"
+    IDS_LF, "Unix (LF)"
+    IDS_CR, "Mac (CR)"
+    IDS_LINE_COLUMN, "%d 行、%d 列"
+    IDS_PRINTERROR, "ファイル '%s'を印刷できません。\n\nプリンタがオンになっていて、正しく設定されているか確認して下さい。"
+    IDS_DEFAULTFONT, "ＭＳ ゴシック"
+    IDS_LINE_NUMBER_OUT_OF_RANGE, "指定された行番号は範囲外です。"
+    IDS_NOWPRINTING, "印刷中..."
+    IDS_PRINTCANCELING, "印刷ジョブをキャンセル中..."
+    IDS_PRINTCOMPLETE, "印刷が完了しました。"
+    IDS_PRINTCANCELED, "印刷がキャンセルされました。"
+    IDS_PRINTFAILED, "印刷が失敗しました。"
+    IDS_TEXT_DOCUMENT, "テキスト文書"
+    IDS_NOTEPAD_AUTHORS, "Copyright 1997,98 Marcel Baur, 2000 Mike McCormack, 2002 Sylvain Petreolle, 2002 Andriy Palamarchuk\r\n"
 }
 
 //////////////////////////////////////////////////////////////////////////////

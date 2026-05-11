@@ -178,19 +178,19 @@ void NOTEPAD_LoadSettingsFromRegistry(PWINDOWPLACEMENT pWP)
     if (!hKey || !QueryString(hKey, _T("lfFaceName"),
                               Globals.lfFont.lfFaceName, _countof(Globals.lfFont.lfFaceName)))
     {
-        LoadString(Globals.hInstance, STRING_DEFAULTFONT, Globals.lfFont.lfFaceName,
+        LoadString(Globals.hInstance, IDS_DEFAULTFONT, Globals.lfFont.lfFaceName,
                    _countof(Globals.lfFont.lfFaceName));
     }
 
     if (!hKey || !QueryString(hKey, _T("szHeader"), Globals.szHeader, _countof(Globals.szHeader)))
     {
-        LoadString(Globals.hInstance, STRING_PAGESETUP_HEADERVALUE, Globals.szHeader,
+        LoadString(Globals.hInstance, IDS_PAGESETUP_HEADERVALUE, Globals.szHeader,
                    _countof(Globals.szHeader));
     }
 
     if (!hKey || !QueryString(hKey, _T("szTrailer"), Globals.szFooter, _countof(Globals.szFooter)))
     {
-        LoadString(Globals.hInstance, STRING_PAGESETUP_FOOTERVALUE, Globals.szFooter,
+        LoadString(Globals.hInstance, IDS_PAGESETUP_FOOTERVALUE, Globals.szFooter,
                    _countof(Globals.szFooter));
     }
 
