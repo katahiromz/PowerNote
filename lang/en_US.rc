@@ -140,7 +140,7 @@ FONT 9, "MS Shell Dlg"
     PUSHBUTTON "Cancel", IDCANCEL, 200, 25, 60, 15
     AUTOCHECKBOX "Match &case", chx1, 5, 30, 105, 15
     AUTOCHECKBOX "Match &whole word only", chx2, 5, 50, 105, 15
-    AUTOCHECKBOX "Use &regular expression", chx3, 5, 70, 105, 15
+    AUTOCHECKBOX "Use regular &expression", chx3, 5, 70, 105, 15
     GROUPBOX "Direction", -1, 135, 25, 60, 65
     AUTORADIOBUTTON "&Up", rad1, 145, 45, 35, 15, WS_TABSTOP
     AUTORADIOBUTTON "&Down", rad2, 145, 65, 35, 15, WS_TABSTOP
@@ -161,7 +161,7 @@ FONT 9, "MS Shell Dlg"
     PUSHBUTTON "Cancel", IDCANCEL, 205, 65, 60, 15
     AUTOCHECKBOX "Match &case", chx1, 5, 50, 105, 15
     AUTOCHECKBOX "Match &whole word only", chx2, 5, 70, 105, 15
-    AUTOCHECKBOX "Use &regular expression", chx3, 5, 90, 105, 15
+    AUTOCHECKBOX "Use regular &expression", chx3, 5, 90, 105, 15
     GROUPBOX "Direction", -1, 120, 50, 75, 60
     AUTORADIOBUTTON "&Up", rad1, 130, 65, 45, 15, WS_TABSTOP
     AUTORADIOBUTTON "&Down", rad2, 130, 85, 45, 15, WS_TABSTOP
