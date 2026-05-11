@@ -13,8 +13,7 @@
 
 #include <shlobj.h>
 #include <strsafe.h>
-#include <regex>
-#include <iterator>
+#include "regex_engine.h"
 
 NOTEPAD_GLOBALS Globals;
 static ATOM aFINDMSGSTRING;
@@ -147,42 +146,30 @@ NOTEPAD_IsWordBoundaryMatch(LPCTSTR pszText, INT iTextLength, DWORD dwStart, DWO
 }
 
 static BOOL
-NOTEPAD_FindRegexDown(PFINDREPLACEDX pFindReplace, const std::basic_regex<TCHAR>& regexFind,
+NOTEPAD_FindRegexDown(PFINDREPLACEDX pFindReplace, const RegexEngine& regexFind,
                       LPCTSTR pszText, INT iTextLength, DWORD dwStartPos, DWORD *pdwPosition, DWORD *pdwEndPos)
 {
-    std::match_results<LPCTSTR> match;
-    LPCTSTR pszBegin = pszText;
-    LPCTSTR pszEnd = pszText + iTextLength;
-    LPCTSTR pszSearch = pszBegin + dwStartPos;
+    size_t matchStart = 0, matchEnd = 0;
+    DWORD  offset     = dwStartPos;
 
-    while (pszSearch < pszEnd)
+    while (offset <= (DWORD)iTextLength)
     {
-        if (!std::regex_search(pszSearch, pszEnd, match, regexFind))
-            break;
-
-        DWORD dwPosition = (DWORD)(pszSearch - pszBegin + match.position(0));
-        DWORD dwEndPos = dwPosition + (DWORD)match.length(0);
-
-        if (match.length(0) == 0)
-        {
-            if (dwPosition < (DWORD)iTextLength)
-            {
-                pszSearch = pszBegin + dwPosition + 1;
-                continue;
-            }
-            break;
-        }
+        if (!regexFind.SearchForward(pszText, (size_t)iTextLength, (size_t)offset,
+                                     &matchStart, &matchEnd))
+            return FALSE;
 
         if (!(pFindReplace->Flags & FR_WHOLEWORD) ||
-            NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength, dwPosition, dwEndPos))
+            NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength,
+                                        (DWORD)matchStart, (DWORD)matchEnd))
         {
-            *pdwPosition = dwPosition;
-            *pdwEndPos = dwEndPos;
+            *pdwPosition = (DWORD)matchStart;
+            *pdwEndPos   = (DWORD)matchEnd;
             return TRUE;
         }
 
-        if (dwPosition < (DWORD)iTextLength)
-            pszSearch = pszBegin + dwPosition + 1;
+        /* Whole-word check failed: advance past this match start and retry */
+        if (matchStart < (size_t)iTextLength)
+            offset = (DWORD)matchStart + 1;
         else
             break;
     }
@@ -191,46 +178,39 @@ NOTEPAD_FindRegexDown(PFINDREPLACEDX pFindReplace, const std::basic_regex<TCHAR>
 }
 
 static BOOL
-NOTEPAD_FindRegexUp(PFINDREPLACEDX pFindReplace, const std::basic_regex<TCHAR>& regexFind,
+NOTEPAD_FindRegexUp(PFINDREPLACEDX pFindReplace, const RegexEngine& regexFind,
                     LPCTSTR pszText, INT iTextLength, DWORD dwStartPos, DWORD *pdwPosition, DWORD *pdwEndPos)
 {
-    std::match_results<LPCTSTR> match;
-    LPCTSTR pszBegin = pszText;
-    LPCTSTR pszEnd = pszText + iTextLength;
-    LPCTSTR pszSearch = pszBegin;
-    BOOL bFound = FALSE;
-    DWORD dwPosition = 0, dwEndPos = 0;
+    /*
+     * Backward search: scan from the beginning, collecting matches that start
+     * before dwStartPos, then return the last qualifying one.
+     */
+    DWORD  offset    = 0;
+    BOOL   bFound    = FALSE;
+    DWORD  lastStart = 0, lastEnd = 0;
 
-    while (pszSearch < pszEnd)
+    while (offset <= (DWORD)iTextLength)
     {
-        if (!std::regex_search(pszSearch, pszEnd, match, regexFind))
+        size_t matchStart = 0, matchEnd = 0;
+
+        if (!regexFind.SearchForward(pszText, (size_t)iTextLength, (size_t)offset,
+                                     &matchStart, &matchEnd))
             break;
 
-        DWORD dwPos = (DWORD)(pszSearch - pszBegin + match.position(0));
-        DWORD dwPosEnd = dwPos + (DWORD)match.length(0);
-        if (dwPos >= dwStartPos)
+        if (matchStart >= (size_t)dwStartPos)
             break;
-
-        if (match.length(0) == 0)
-        {
-            if (dwPos < (DWORD)iTextLength)
-            {
-                pszSearch = pszBegin + dwPos + 1;
-                continue;
-            }
-            break;
-        }
 
         if (!(pFindReplace->Flags & FR_WHOLEWORD) ||
-            NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength, dwPos, dwPosEnd))
+            NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength,
+                                        (DWORD)matchStart, (DWORD)matchEnd))
         {
-            bFound = TRUE;
-            dwPosition = dwPos;
-            dwEndPos = dwPosEnd;
+            bFound    = TRUE;
+            lastStart = (DWORD)matchStart;
+            lastEnd   = (DWORD)matchEnd;
         }
 
-        if (dwPos < (DWORD)iTextLength)
-            pszSearch = pszBegin + dwPos + 1;
+        if (matchStart < (size_t)iTextLength)
+            offset = (DWORD)matchStart + 1;
         else
             break;
     }
@@ -238,8 +218,8 @@ NOTEPAD_FindRegexUp(PFINDREPLACEDX pFindReplace, const std::basic_regex<TCHAR>& 
     if (!bFound)
         return FALSE;
 
-    *pdwPosition = dwPosition;
-    *pdwEndPos = dwEndPos;
+    *pdwPosition = lastStart;
+    *pdwEndPos   = lastEnd;
     return TRUE;
 }
 
@@ -259,25 +239,20 @@ BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAler
     TCHAR szResource[128], szText[128];
     BOOL bSuccess;
     BOOL bUseRegex;
-    std::basic_regex<TCHAR> regexFind;
+    RegexEngine regexFind;
 
     iTargetLength = (int) _tcslen(pFindReplace->lpstrFindWhat);
     bUseRegex = pFindReplace->bRegExp;
 
     if (bUseRegex)
     {
-        try
-        {
-            std::regex_constants::syntax_option_type flags = std::regex_constants::ECMAScript;
-            if (!(pFindReplace->Flags & FR_MATCHCASE))
-                flags |= std::regex_constants::icase;
-            regexFind = std::basic_regex<TCHAR>(pFindReplace->lpstrFindWhat, flags);
-        }
-        catch (const std::regex_error&)
+        std::wstring errMsg;
+        bool caseless = !(pFindReplace->Flags & FR_MATCHCASE);
+        if (!regexFind.Compile(pFindReplace->lpstrFindWhat, caseless, &errMsg))
         {
             if (bShowAlert)
             {
-                LoadString(Globals.hInstance, IDS_CANNOTFIND, szResource, _countof(szResource));
+                LoadString(Globals.hInstance, IDS_INVALID_REGEX, szResource, _countof(szResource));
                 StringCchPrintf(szText, _countof(szText), szResource, pFindReplace->lpstrFindWhat);
                 LoadString(Globals.hInstance, IDS_NOTEPAD, szResource, _countof(szResource));
                 MessageBox(Globals.hFindReplaceDlg, szText, szResource, MB_OK);
@@ -337,26 +312,22 @@ BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAler
         {
             if (pszText && dwEnd <= (DWORD)iTextLength)
             {
-                std::match_results<LPCTSTR> fullMatch;
-                LPCTSTR pszSelStart = pszText + dwBegin;
-                LPCTSTR pszSelEnd = pszText + dwEnd;
-                try
+                bSelectionMatched = regexFind.IsFullMatch(pszText, dwBegin, dwEnd);
+                if (bSelectionMatched && (pFindReplace->Flags & FR_WHOLEWORD))
+                    bSelectionMatched = NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength, dwBegin, dwEnd);
+                if (bSelectionMatched)
                 {
-                    bSelectionMatched = std::regex_match(pszSelStart, pszSelEnd, fullMatch, regexFind);
-                    if (bSelectionMatched && (pFindReplace->Flags & FR_WHOLEWORD))
-                        bSelectionMatched = NOTEPAD_IsWordBoundaryMatch(pszText, iTextLength, dwBegin, dwEnd);
-                    if (bSelectionMatched)
+                    std::wstring replaced;
+                    if (regexFind.ReplaceMatch(pszText, (size_t)iTextLength,
+                                               (size_t)dwBegin, (size_t)dwEnd,
+                                               pFindReplace->lpstrReplaceWith, replaced))
                     {
-                        std::basic_string<TCHAR> replaced;
-                        std::regex_replace(std::back_inserter(replaced),
-                                           pszSelStart, pszSelEnd,
-                                           regexFind, pFindReplace->lpstrReplaceWith);
                         SendMessage(Globals.hEdit, EM_REPLACESEL, TRUE, (LPARAM)replaced.c_str());
                     }
-                }
-                catch (const std::regex_error&)
-                {
-                    bSelectionMatched = FALSE;
+                    else
+                    {
+                        bSelectionMatched = FALSE;
+                    }
                 }
             }
         }

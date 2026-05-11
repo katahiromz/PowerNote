@@ -80,6 +80,7 @@
 #define IDS_PRINTFAILED                     400
 #define IDS_TEXT_DOCUMENT                   512
 #define IDS_NOTEPAD_AUTHORS                 768
+#define IDS_INVALID_REGEX                   401
 
 #define ID_ACCEL                            515
 #define ID_ENCODING                         517
