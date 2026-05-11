@@ -817,9 +817,23 @@ static VOID DIALOG_SearchDialog(FINDPROC pfnProc)
     assert(Globals.hFindReplaceDlg != NULL);
 }
 
+HWND CALLBACK DIALOG_FindText(LPFINDREPLACE lpfr)
+{
+    PFINDREPLACEDX pFR = (PFINDREPLACEDX)lpfr;
+    // TODO:
+    return NULL;
+}
+
+HWND CALLBACK DIALOG_ReplaceText(LPFINDREPLACE lpfr)
+{
+    PFINDREPLACEDX pFR = (PFINDREPLACEDX)lpfr;
+    // TODO:
+    return NULL;
+}
+
 VOID DIALOG_Search(VOID)
 {
-    DIALOG_SearchDialog(FindText);
+    DIALOG_SearchDialog(DIALOG_FindText);
 }
 
 VOID DIALOG_SearchNext(BOOL bDown)
@@ -837,7 +851,7 @@ VOID DIALOG_SearchNext(BOOL bDown)
 
 VOID DIALOG_Replace(VOID)
 {
-    DIALOG_SearchDialog(ReplaceText);
+    DIALOG_SearchDialog(DIALOG_ReplaceText);
 }
 
 typedef struct tagGOTO_DATA

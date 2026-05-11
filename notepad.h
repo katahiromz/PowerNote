@@ -55,6 +55,11 @@ typedef enum
     EOLN_CR   = 2  /* "\r" */
 } EOLN; /* End of line (NewLine) type */
 
+typedef struct tagFINDREPLACEDX : FINDREPLACE
+{
+    BOOL bRegExp;
+} FINDREPLACEDX, *PFINDREPLACEDX;
+
 typedef struct
 {
     HINSTANCE hInstance;
@@ -82,7 +87,7 @@ typedef struct
     ENCODING encFile;
     EOLN iEoln;
 
-    FINDREPLACE find;
+    FINDREPLACEDX find;
     WNDPROC EditProc;
     BOOL bWasModified;
 } NOTEPAD_GLOBALS;
@@ -95,6 +100,6 @@ BOOL WriteText(HANDLE hFile, LPCWSTR pszText, DWORD dwTextLen, ENCODING encFile,
 void NOTEPAD_LoadSettingsFromRegistry(PWINDOWPLACEMENT pWP);
 void NOTEPAD_SaveSettingsToRegistry(void);
 
-BOOL NOTEPAD_FindNext(FINDREPLACE *pFindReplace, BOOL bReplace, BOOL bShowAlert);
+BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAlert);
 VOID NOTEPAD_EnableSearchMenu(VOID);
 VOID SetFileName(LPCTSTR szFileName);

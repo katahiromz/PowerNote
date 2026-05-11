@@ -91,7 +91,7 @@ static int NOTEPAD_MenuCommand(WPARAM wParam)
  *           NOTEPAD_FindTextAt
  */
 static BOOL
-NOTEPAD_FindTextAt(FINDREPLACE *pFindReplace, LPCTSTR pszText, INT iTextLength, DWORD dwPosition)
+NOTEPAD_FindTextAt(PFINDREPLACEDX pFindReplace, LPCTSTR pszText, INT iTextLength, DWORD dwPosition)
 {
     BOOL bMatches;
     size_t iTargetLength;
@@ -129,7 +129,7 @@ NOTEPAD_FindTextAt(FINDREPLACE *pFindReplace, LPCTSTR pszText, INT iTextLength, 
 /***********************************************************************
  *           NOTEPAD_FindNext
  */
-BOOL NOTEPAD_FindNext(FINDREPLACE *pFindReplace, BOOL bReplace, BOOL bShowAlert)
+BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAlert)
 {
     int iTextLength, iTargetLength;
     size_t iAdjustment = 0;
@@ -217,7 +217,7 @@ BOOL NOTEPAD_FindNext(FINDREPLACE *pFindReplace, BOOL bReplace, BOOL bShowAlert)
 /***********************************************************************
  *           NOTEPAD_ReplaceAll
  */
-static VOID NOTEPAD_ReplaceAll(FINDREPLACE *pFindReplace)
+static VOID NOTEPAD_ReplaceAll(PFINDREPLACEDX pFindReplace)
 {
     BOOL bShowAlert = TRUE;
 
@@ -430,8 +430,8 @@ NOTEPAD_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     default:
         if (msg == aFINDMSGSTRING)
         {
-            FINDREPLACE *pFindReplace = (FINDREPLACE *) lParam;
-            Globals.find = *(FINDREPLACE *) lParam;
+            PFINDREPLACEDX pFindReplace = (PFINDREPLACEDX)lParam;
+            Globals.find = *(PFINDREPLACEDX)lParam;
 
             WaitCursor(TRUE);
 
