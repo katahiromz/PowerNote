@@ -817,18 +817,136 @@ static VOID DIALOG_SearchDialog(FINDPROC pfnProc)
     assert(Globals.hFindReplaceDlg != NULL);
 }
 
+/* Read dialog controls into pFR; bReplace indicates the Replace dialog */
+static VOID DIALOG_ReadFindReplace(HWND hDlg, PFINDREPLACEDX pFR, BOOL bReplace)
+{
+    GetDlgItemText(hDlg, edt1, pFR->lpstrFindWhat, pFR->wFindWhatLen);
+    if (bReplace)
+        GetDlgItemText(hDlg, edt2, pFR->lpstrReplaceWith, pFR->wReplaceWithLen);
+    pFR->Flags &= ~(FR_MATCHCASE | FR_WHOLEWORD | FR_DOWN);
+    if (IsDlgButtonChecked(hDlg, chx1) == BST_CHECKED) pFR->Flags |= FR_MATCHCASE;
+    if (IsDlgButtonChecked(hDlg, chx2) == BST_CHECKED) pFR->Flags |= FR_WHOLEWORD;
+    if (IsDlgButtonChecked(hDlg, rad2) == BST_CHECKED) pFR->Flags |= FR_DOWN;
+    pFR->bRegExp = (IsDlgButtonChecked(hDlg, chx3) == BST_CHECKED);
+}
+
+/* Registered message ID for find/replace notifications (cached on first use) */
+static UINT s_uFindReplaceMsg = 0;
+
+static UINT DIALOG_GetFindReplaceMsg(VOID)
+{
+    if (s_uFindReplaceMsg == 0)
+        s_uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
+    return s_uFindReplaceMsg;
+}
+
+static INT_PTR CALLBACK DIALOG_Find_DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    PFINDREPLACEDX pFR = (PFINDREPLACEDX)GetWindowLongPtr(hDlg, DWLP_USER);
+
+    switch (uMsg)
+    {
+        case WM_INITDIALOG:
+            pFR = (PFINDREPLACEDX)lParam;
+            SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR)pFR);
+            SetDlgItemText(hDlg, edt1, pFR->lpstrFindWhat);
+            CheckDlgButton(hDlg, chx1, (pFR->Flags & FR_MATCHCASE) ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hDlg, chx2, (pFR->Flags & FR_WHOLEWORD) ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hDlg, chx3, pFR->bRegExp ? BST_CHECKED : BST_UNCHECKED);
+            CheckRadioButton(hDlg, rad1, rad2, (pFR->Flags & FR_DOWN) ? rad2 : rad1);
+            return TRUE;
+
+        case WM_COMMAND:
+            switch (LOWORD(wParam))
+            {
+                case IDOK:
+                    DIALOG_ReadFindReplace(hDlg, pFR, FALSE);
+                    pFR->Flags = (pFR->Flags & ~FR_DIALOGTERM) | FR_FINDNEXT;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    break;
+
+                case IDCANCEL:
+                    pFR->Flags = (pFR->Flags & ~(FR_FINDNEXT | FR_REPLACE | FR_REPLACEALL)) | FR_DIALOGTERM;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    DestroyWindow(hDlg);
+                    break;
+            }
+            break;
+    }
+    return 0;
+}
+
+static INT_PTR CALLBACK DIALOG_Replace_DialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    PFINDREPLACEDX pFR = (PFINDREPLACEDX)GetWindowLongPtr(hDlg, DWLP_USER);
+
+    switch (uMsg)
+    {
+        case WM_INITDIALOG:
+            pFR = (PFINDREPLACEDX)lParam;
+            SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR)pFR);
+            SetDlgItemText(hDlg, edt1, pFR->lpstrFindWhat);
+            SetDlgItemText(hDlg, edt2, pFR->lpstrReplaceWith);
+            CheckDlgButton(hDlg, chx1, (pFR->Flags & FR_MATCHCASE) ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hDlg, chx2, (pFR->Flags & FR_WHOLEWORD) ? BST_CHECKED : BST_UNCHECKED);
+            CheckDlgButton(hDlg, chx3, pFR->bRegExp ? BST_CHECKED : BST_UNCHECKED);
+            CheckRadioButton(hDlg, rad1, rad2, (pFR->Flags & FR_DOWN) ? rad2 : rad1);
+            return TRUE;
+
+        case WM_COMMAND:
+            switch (LOWORD(wParam))
+            {
+                case IDOK: /* Find Next */
+                    DIALOG_ReadFindReplace(hDlg, pFR, TRUE);
+                    pFR->Flags = (pFR->Flags & ~(FR_REPLACE | FR_REPLACEALL | FR_DIALOGTERM)) | FR_FINDNEXT;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    break;
+
+                case psh1: /* Replace */
+                    DIALOG_ReadFindReplace(hDlg, pFR, TRUE);
+                    pFR->Flags = (pFR->Flags & ~(FR_FINDNEXT | FR_REPLACEALL | FR_DIALOGTERM)) | FR_REPLACE;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    break;
+
+                case psh2: /* Replace All */
+                    DIALOG_ReadFindReplace(hDlg, pFR, TRUE);
+                    pFR->Flags = (pFR->Flags & ~(FR_FINDNEXT | FR_REPLACE | FR_DIALOGTERM)) | FR_REPLACEALL;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    break;
+
+                case IDCANCEL: /* Cancel */
+                    pFR->Flags = (pFR->Flags & ~(FR_FINDNEXT | FR_REPLACE | FR_REPLACEALL)) | FR_DIALOGTERM;
+                    SendMessage(pFR->hwndOwner, DIALOG_GetFindReplaceMsg(), 0, (LPARAM)pFR);
+                    DestroyWindow(hDlg);
+                    break;
+            }
+            break;
+    }
+    return 0;
+}
+
 HWND CALLBACK DIALOG_FindText(LPFINDREPLACE lpfr)
 {
-    PFINDREPLACEDX pFR = (PFINDREPLACEDX)lpfr;
-    // TODO:
-    return NULL;
+    HWND hDlg = CreateDialogParam(Globals.hInstance,
+                                   MAKEINTRESOURCE(IDD_FIND),
+                                   lpfr->hwndOwner,
+                                   DIALOG_Find_DialogProc,
+                                   (LPARAM)lpfr);
+    if (hDlg != NULL)
+        ShowWindow(hDlg, SW_SHOW);
+    return hDlg;
 }
 
 HWND CALLBACK DIALOG_ReplaceText(LPFINDREPLACE lpfr)
 {
-    PFINDREPLACEDX pFR = (PFINDREPLACEDX)lpfr;
-    // TODO:
-    return NULL;
+    HWND hDlg = CreateDialogParam(Globals.hInstance,
+                                   MAKEINTRESOURCE(IDD_REPLACE),
+                                   lpfr->hwndOwner,
+                                   DIALOG_Replace_DialogProc,
+                                   (LPARAM)lpfr);
+    if (hDlg != NULL)
+        ShowWindow(hDlg, SW_SHOW);
+    return hDlg;
 }
 
 VOID DIALOG_Search(VOID)
