@@ -10,6 +10,7 @@ It's a free and open source software for Windows XP and later.
 
 - Can be used like Notepad.
 - Supports regular expression replacement and cyclic replacement.
+- Able to generate GUID.
 
 ## Main code contributors
 

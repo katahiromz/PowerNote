@@ -67,6 +67,7 @@ static int NOTEPAD_MenuCommand(WPARAM wParam)
     case IDC_DELETE:     DIALOG_EditDelete(); break;
     case IDC_SELECT_ALL: DIALOG_EditSelectAll(); break;
     case IDC_TIME_DATE:  DIALOG_EditTimeDate(); break;
+    case IDC_GUID:       DIALOG_EditGuid(); break;
 
     case IDC_SEARCH:      DIALOG_Search(); break;
     case IDC_SEARCH_NEXT: DIALOG_SearchNext(TRUE); break;

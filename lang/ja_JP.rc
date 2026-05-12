@@ -41,7 +41,9 @@ IDR_MAIN_MENU MENU
         MENUITEM "行へ移動...\tCtrl+G", IDC_GOTO
         MENUITEM SEPARATOR
         MENUITEM "すべて選択(&A)\tCtrl+A", IDC_SELECT_ALL
+        MENUITEM SEPARATOR
         MENUITEM "日付と時刻(&T)\tF5", IDC_TIME_DATE
+        MENUITEM "GUIDを生成(&G)", IDC_GUID
     }
     POPUP "書式(&O)"
     {

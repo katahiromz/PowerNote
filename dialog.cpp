@@ -616,6 +616,24 @@ VOID DIALOG_EditSelectAll(VOID)
     SendMessage(Globals.hEdit, EM_SETSEL, 0, -1);
 }
 
+VOID DIALOG_EditGuid(VOID)
+{
+    GUID guid;
+    PBYTE pb = (PBYTE)&guid;
+    size_t cb = sizeof(guid);
+
+    srand(GetTickCount());
+    for (size_t ib = 0; ib < cb; ++ib)
+    {
+        pb[ib] = LOBYTE(rand());
+    }
+
+    WCHAR text[MAX_PATH];
+    StringFromGUID2(guid, text, _countof(text));
+
+    SendMessage(Globals.hEdit, EM_REPLACESEL, TRUE, (LPARAM)text);
+}
+
 VOID DIALOG_EditTimeDate(VOID)
 {
     SYSTEMTIME st;

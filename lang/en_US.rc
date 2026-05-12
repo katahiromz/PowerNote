@@ -41,7 +41,9 @@ IDR_MAIN_MENU MENU
         MENUITEM "&Go To...\tCtrl+G", IDC_GOTO
         MENUITEM SEPARATOR
         MENUITEM "Select &All\tCtrl+A", IDC_SELECT_ALL
+        MENUITEM SEPARATOR
         MENUITEM "Time/&Date\tF5", IDC_TIME_DATE
+        MENUITEM "&Generate GUID", IDC_GUID
     }
     POPUP "F&ormat"
     {

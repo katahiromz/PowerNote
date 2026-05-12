@@ -34,6 +34,7 @@
 #define IDC_PRINTING_FILENAME               525
 #define IDC_PRINTING_PAGE                   526
 #define IDC_CYCLIC_REPLACE                  527
+#define IDC_GUID                            528
 
 #define IDD_PAGESETUP                       514
 #define IDD_ENCODING                        516
