@@ -16,6 +16,13 @@ It's a free and open source text editor.
 
 - Windows 11, Windows 10, Windows 7, Windows Vista and Windows XP.
 
+## About cyclic replacement
+
+You can execute a cyclic replacement by selecting "Cyclic Replace" from the "Edit" menu.
+
+Substitutions such as "Taro" → "Hanako," "Hanako" → "Jiro," and "Jiro" → "Taro" are possible.
+This will be useful when swapping characters in a script, for example.
+
 ## Main code contributors
 
 - Copyright ReactOS Development Team

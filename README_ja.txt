@@ -16,6 +16,13 @@
 
 - Windows 11、Windows 10、Windows 7、Windows Vista および Windows XP
 
+## 巡回置換について
+
+「編集」メニューから「巡回置換」を選ぶと巡回置換が可能です。
+
+「太郎」→「花子」、「花子」→「次郎」、「次郎」→「太郎」のような置換が可能です。
+脚本で登場人物を入れ替えるときなどに便利です。
+
 ## 貢献者
 
 - Copyright ReactOS Development Team
