@@ -1175,7 +1175,16 @@ DIALOG_CyclicReplace_OnUpdate(PCYCLIC_REPLACE pThis, HWND hwnd)
     {
         if (iItem != 0)
             strFind += L")|(";
-        strFind += RegexEngine::EscapeForRegex(pThis->items[iItem]);
+        if (pThis->bWholeWord)
+        {
+            strFind += L"\\b";
+            strFind += RegexEngine::EscapeForRegex(pThis->items[iItem]);
+            strFind += L"\\b";
+        }
+        else
+        {
+            strFind += RegexEngine::EscapeForRegex(pThis->items[iItem]);
+        }
     }
     strFind += L")";
     pThis->strFind = std::move(strFind);
@@ -1247,8 +1256,8 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 case IDOK:
                 {
-                    s_pThis->bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
-                    s_pThis->bIgnoreCase = !(Globals.find.Flags & FR_MATCHCASE);
+                    s_pThis->bWholeWord = IsDlgButtonChecked(hwnd, chx2) == BST_CHECKED;
+                    s_pThis->bIgnoreCase = IsDlgButtonChecked(hwnd, chx1) != BST_CHECKED;
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
 
                     EndDialog(hwnd, IDOK);
@@ -1342,13 +1351,6 @@ VOID DIALOG_CyclicReplace(VOID)
     {
         WaitCursor(TRUE);
 
-        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
-        if (data.bWholeWord)
-            Globals.find.Flags |= FR_WHOLEWORD;
-        if (data.bIgnoreCase)
-            Globals.find.Flags |= FR_MATCHCASE;
-        Globals.CyclicReplaceItems = data.items;
-
         FINDREPLACEDX find = Globals.find;
         find.lStructSize = sizeof(FINDREPLACEW);
         find.hwndOwner = Globals.hMainWnd;
@@ -1357,8 +1359,19 @@ VOID DIALOG_CyclicReplace(VOID)
         find.lpstrReplaceWith = &data.strReplace[0];
         find.wReplaceWithLen = (WORD)lstrlenW(find.lpstrReplaceWith);
         find.bRegExp = TRUE;
-        find.Flags |= FR_DOWN | FR_REPLACEALL;
+        find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+        find.Flags |= FR_DOWN;
+        if (!data.bIgnoreCase)
+            find.Flags |= FR_MATCHCASE;
+
         NOTEPAD_ReplaceAll(&find);
+
+        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+        if (data.bWholeWord)
+            Globals.find.Flags |= FR_WHOLEWORD;
+        if (data.bIgnoreCase)
+            Globals.find.Flags |= FR_MATCHCASE;
+        Globals.CyclicReplaceItems = std::move(data.items);
 
         WaitCursor(FALSE);
     }
