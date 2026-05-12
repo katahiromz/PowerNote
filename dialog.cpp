@@ -1093,7 +1093,30 @@ VOID DIALOG_ViewStatusBar(VOID)
 
 VOID DIALOG_HelpContents(VOID)
 {
-    WinHelp(Globals.hMainWnd, helpfile, HELP_INDEX, 0);
+    // Open README
+    WCHAR szFileName[MAX_PATH];
+    LoadString(Globals.hInstance, IDS_README, szFileName, _countof(szFileName));
+
+    WCHAR szPath[MAX_PATH];
+    GetModuleFileNameW(NULL, szPath, _countof(szPath));
+    LPWSTR pch = wcsrchr(szPath, '\\');
+    *pch = 0;
+    wcscat(szPath, L"\\");
+    wcscat(szPath, szFileName);
+    if (GetFileAttributesW(szPath) == INVALID_FILE_ATTRIBUTES)
+    {
+        *pch = 0;
+        wcscat(szPath, L"\\..\\");
+        wcscat(szPath, szFileName);
+        if (GetFileAttributesW(szPath) == INVALID_FILE_ATTRIBUTES)
+        {
+            *pch = 0;
+            wcscat(szPath, L"\\..\\..\\");
+            wcscat(szPath, szFileName);
+        }
+    }
+
+    ShellExecuteW(Globals.hMainWnd, NULL, szPath, NULL, NULL, SW_SHOWNORMAL);
 }
 
 VOID DIALOG_HelpAboutNotepad(VOID)

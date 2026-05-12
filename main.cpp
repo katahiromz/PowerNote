@@ -557,9 +557,6 @@ NOTEPAD_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         DoShowHideStatusBar();
 
         DIALOG_FileNew(); /* Initialize file info */
-
-        // For now, the "Help" dialog is disabled due to the lack of HTML Help support
-        EnableMenuItem(Globals.hMenu, IDC_HELP_CONTENTS, MF_BYCOMMAND | MF_GRAYED);
         break;
 
     case WM_COMMAND:

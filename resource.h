@@ -85,6 +85,7 @@
 #define IDS_WANTTWOITEMS                    402
 #define IDS_CYCLICREPLACEINFO               403
 #define IDS_NOTEPAD_VERSION                 404
+#define IDS_README                          405
 #define IDS_TEXT_DOCUMENT                   512
 
 #define ID_ACCEL                            515

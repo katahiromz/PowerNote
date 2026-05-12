@@ -54,9 +54,9 @@ IDR_MAIN_MENU MENU
     }
     POPUP "&Help"
     {
-        MENUITEM "View &Help", IDC_HELP_CONTENTS
+        MENUITEM "Open &README", IDC_HELP_CONTENTS
         MENUITEM SEPARATOR
-        MENUITEM "&About Notepad", IDC_HELP_ABOUT_NOTEPAD
+        MENUITEM "&About PowerNote...", IDC_HELP_ABOUT_NOTEPAD
     }
 }
 
@@ -243,6 +243,7 @@ STRINGTABLE
     IDS_WANTTWOITEMS, "Please add two or more items for cyclic replacement."
     IDS_CYCLICREPLACEINFO, "We will perform the following cyclic replacement:\r\n\r\n"
     IDS_NOTEPAD_VERSION, "PowerNote Version 1.0.0\r\n\r\nCopyright (c) 2026 katahiromz"
+    IDS_README, "README.txt"
     IDS_TEXT_DOCUMENT, "Text Document"
 }
 

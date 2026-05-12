@@ -54,9 +54,9 @@ IDR_MAIN_MENU MENU
     }
     POPUP "ヘルプ(&H)"
     {
-        MENUITEM "目次(&C)", IDC_HELP_CONTENTS
+        MENUITEM "README を開く(&R)", IDC_HELP_CONTENTS
         MENUITEM SEPARATOR
-        MENUITEM "メモ帳について(&A)", IDC_HELP_ABOUT_NOTEPAD
+        MENUITEM "PowerNote について(&A)...", IDC_HELP_ABOUT_NOTEPAD
     }
 }
 
@@ -243,6 +243,7 @@ STRINGTABLE
     IDS_WANTTWOITEMS, "巡回置換用の2個以上の項目を追加してください。"
     IDS_CYCLICREPLACEINFO, "次のように巡回置換します：\r\n\r\n"
     IDS_NOTEPAD_VERSION, "PowerNote バージョン 1.0.0\r\n\r\nCopyright (c) 2026 片山博文MZ"
+    IDS_README, "README_ja.txt"
     IDS_TEXT_DOCUMENT, "テキスト文書"
 }
 

@@ -1,17 +1,17 @@
-﻿(English)
+﻿(Japanese, UTF-8)
 
 # PowerNote
 
-## What's this?
+## これは何？
 
-It's a free and open source software for Windows XP and later.
+これは無料かつオープンソースのテキストエディタです。
 
-## Features
+## 特徴
 
-- Can be used like Notepad.
-- Supports regular expression replacement and cyclic replacement.
+- メモ帳のように使えます。
+- 正規表現置換と巡回置換をサポート。
 
-## Main code contributors
+## 貢献者
 
 - Copyright ReactOS Development Team
 - Copyright 1997,98,99 Marcel Baur (mbaur@g26.ethz.ch)
@@ -21,6 +21,6 @@ It's a free and open source software for Windows XP and later.
 - Copyright 2019-2026 Katayama Hirofumi MZ (katayama.hirofumi.mz@gmail.com)
 - and more!
 
-## License
+## ライセンス
 
-- LGPL 2.1 and later
+- LGPL 2.1 以降
