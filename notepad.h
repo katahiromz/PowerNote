@@ -60,6 +60,8 @@ typedef struct tagFINDREPLACEDX : FINDREPLACE
     BOOL bRegExp;
 } FINDREPLACEDX, *PFINDREPLACEDX;
 
+#define MAX_FINDREPLACE_LENGTH 1024
+
 typedef struct
 {
     HINSTANCE hInstance;
@@ -74,8 +76,8 @@ typedef struct
     LOGFONT lfFont;
     BOOL bWrapLongLines;
     BOOL bShowStatusBar;
-    TCHAR szFindText[1024];
-    TCHAR szReplaceText[1024];
+    TCHAR szFindText[MAX_FINDREPLACE_LENGTH];
+    TCHAR szReplaceText[MAX_FINDREPLACE_LENGTH];
     TCHAR szFileName[MAX_PATH];
     TCHAR szFileTitle[MAX_PATH];
     TCHAR szFilter[512];

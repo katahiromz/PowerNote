@@ -849,6 +849,7 @@ static INT_PTR CALLBACK DIALOG_Find_DialogProc(HWND hDlg, UINT uMsg, WPARAM wPar
         case WM_INITDIALOG:
             pFR = (PFINDREPLACEDX)lParam;
             SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR)pFR);
+            SendDlgItemMessage(hDlg, edt1, EM_LIMITTEXT, MAX_FINDREPLACE_LENGTH - 1, 0);
             SetDlgItemText(hDlg, edt1, pFR->lpstrFindWhat);
             CheckDlgButton(hDlg, chx1, (pFR->Flags & FR_MATCHCASE) ? BST_CHECKED : BST_UNCHECKED);
             CheckDlgButton(hDlg, chx2, (pFR->Flags & FR_WHOLEWORD) ? BST_CHECKED : BST_UNCHECKED);
@@ -885,6 +886,8 @@ static INT_PTR CALLBACK DIALOG_Replace_DialogProc(HWND hDlg, UINT uMsg, WPARAM w
         case WM_INITDIALOG:
             pFR = (PFINDREPLACEDX)lParam;
             SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR)pFR);
+            SendDlgItemMessage(hDlg, edt1, EM_LIMITTEXT, MAX_FINDREPLACE_LENGTH - 1, 0);
+            SendDlgItemMessage(hDlg, edt2, EM_LIMITTEXT, MAX_FINDREPLACE_LENGTH - 1, 0);
             SetDlgItemText(hDlg, edt1, pFR->lpstrFindWhat);
             SetDlgItemText(hDlg, edt2, pFR->lpstrReplaceWith);
             CheckDlgButton(hDlg, chx1, (pFR->Flags & FR_MATCHCASE) ? BST_CHECKED : BST_UNCHECKED);
