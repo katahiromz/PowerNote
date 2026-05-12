@@ -36,7 +36,7 @@ IDR_MAIN_MENU MENU
         MENUITEM "Find &Next\tF3", IDC_SEARCH_NEXT
         MENUITEM "&Replace...\tCtrl+H", IDC_REPLACE
         MENUITEM SEPARATOR
-        MENUITEM "C&yclic Replace...", IDC_CYCLIC_REPLACE
+        MENUITEM "C&yclic Replace...\tCtrl+Shift+H", IDC_CYCLIC_REPLACE
         MENUITEM SEPARATOR
         MENUITEM "&Go To...\tCtrl+G", IDC_GOTO
         MENUITEM SEPARATOR

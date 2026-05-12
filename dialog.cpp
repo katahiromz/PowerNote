@@ -1212,17 +1212,7 @@ DIALOG_AddItem_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static BOOL
 DIALOG_CyclicReplace_OnUpdate(PCYCLIC_REPLACE pThis, HWND hwnd)
 {
-    HWND hLst1 = GetDlgItem(hwnd, lst1);
-    size_t cItems = ListBox_GetCount(hLst1);
-
-    // Get items
-    WCHAR text[MAX_FINDREPLACE_LENGTH];
-    pThis->items.clear();
-    for (INT iItem = 0; iItem < cItems; ++iItem)
-    {
-        ListBox_GetText(hLst1, iItem, text);
-        pThis->items.push_back(text);
-    }
+    size_t cItems = pThis->items.size();
 
     // Set strFind
     std::wstring strFind = L"(";
@@ -1257,6 +1247,7 @@ DIALOG_CyclicReplace_OnUpdate(PCYCLIC_REPLACE pThis, HWND hwnd)
     pThis->strReplace = std::move(strReplace);
 
     // Set Info
+    WCHAR text[MAX_FINDREPLACE_LENGTH];
     if (pThis->items.size() < 2)
     {
         LoadStringW(Globals.hInstance, IDS_WANTTWOITEMS, text, _countof(text));
@@ -1317,7 +1308,6 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     s_pThis->bMatchCase = IsDlgButtonChecked(hwnd, chx1) == BST_CHECKED;
                     s_pThis->bWholeWord = IsDlgButtonChecked(hwnd, chx2) == BST_CHECKED;
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
-
                     EndDialog(hwnd, IDOK);
                     break;
                 }
@@ -1332,6 +1322,7 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                         HWND hLst1 = GetDlgItem(hwnd, lst1);
                         INT iItem = ListBox_AddString(GetDlgItem(hwnd, lst1), s_pThis->text.c_str());
                         ListBox_SetCurSel(hLst1, iItem);
+                        s_pThis->items.push_back(s_pThis->text);
                         DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
                     }
                     break;
@@ -1350,6 +1341,7 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     ListBox_InsertString(hLst1, iItem - 1, text1);
                     ListBox_InsertString(hLst1, iItem - 1, text2);
                     ListBox_SetCurSel(hLst1, iItem - 1);
+                    std::swap(s_pThis->items[iItem - 1], s_pThis->items[iItem]);
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
                     break;
                 }
@@ -1368,6 +1360,7 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     ListBox_InsertString(hLst1, iItem, text1);
                     ListBox_InsertString(hLst1, iItem, text2);
                     ListBox_SetCurSel(hLst1, iItem + 1);
+                    std::swap(s_pThis->items[iItem], s_pThis->items[iItem + 1]);
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
                     break;
                 }
@@ -1379,6 +1372,7 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                         break;
                     ListBox_DeleteString(hLst1, iItem);
                     ListBox_SetCurSel(hLst1, iItem);
+                    s_pThis->items.erase(s_pThis->items.begin() + iItem);
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
                     break;
                 }
@@ -1386,6 +1380,7 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     HWND hLst1 = GetDlgItem(hwnd, lst1);
                     ListBox_ResetContent(hLst1);
+                    s_pThis->items.clear();
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
                     break;
                 }
@@ -1431,6 +1426,7 @@ VOID DIALOG_CyclicReplace(VOID)
             Globals.find.Flags |= FR_WHOLEWORD;
         if (data.bMatchCase)
             Globals.find.Flags |= FR_MATCHCASE;
+        delete Globals.pCyclicReplaceItems;
         Globals.pCyclicReplaceItems = new std::vector<std::wstring>(std::move(data.items));
 
         WaitCursor(FALSE);

@@ -36,7 +36,7 @@ IDR_MAIN_MENU MENU
         MENUITEM "次を検索(&S)\tF3", IDC_SEARCH_NEXT
         MENUITEM "置換(&R)...\tCtrl+H", IDC_REPLACE
         MENUITEM SEPARATOR
-        MENUITEM "巡回置換(&Y)...", IDC_CYCLIC_REPLACE
+        MENUITEM "巡回置換(&Y)...\tCtrl+Shift+H", IDC_CYCLIC_REPLACE
         MENUITEM SEPARATOR
         MENUITEM "行へ移動...\tCtrl+G", IDC_GOTO
         MENUITEM SEPARATOR
