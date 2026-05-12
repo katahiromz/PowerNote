@@ -314,7 +314,14 @@ BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAler
                                                (size_t)dwBegin, (size_t)dwEnd,
                                                pFindReplace->lpstrReplaceWith, replaced))
                     {
+                        if (bTextLocked)
+                        {
+                            LocalUnlock(hText);
+                            bTextLocked = FALSE;
+                        }
                         SendMessage(Globals.hEdit, EM_REPLACESEL, TRUE, (LPARAM)replaced.c_str());
+                        if (!acquireEditText())
+                            return FALSE;
                     }
                     else
                     {
@@ -327,7 +334,14 @@ BOOL NOTEPAD_FindNext(PFINDREPLACEDX pFindReplace, BOOL bReplace, BOOL bShowAler
                  NOTEPAD_FindTextAt(pFindReplace, pszText, iTextLength, dwBegin))
         {
             bSelectionMatched = TRUE;
+            if (bTextLocked)
+            {
+                LocalUnlock(hText);
+                bTextLocked = FALSE;
+            }
             SendMessage(Globals.hEdit, EM_REPLACESEL, TRUE, (LPARAM)pFindReplace->lpstrReplaceWith);
+            if (!acquireEditText())
+                return FALSE;
         }
 
         if (bSelectionMatched)
