@@ -1355,7 +1355,8 @@ VOID DIALOG_CyclicReplace(VOID)
     CYCLIC_REPLACE data;
     data.bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
     data.bMatchCase = !!(Globals.find.Flags & FR_MATCHCASE);
-    data.items = Globals.CyclicReplaceItems;
+    if (Globals.pCyclicReplaceItems)
+        data.items = *Globals.pCyclicReplaceItems;
     INT_PTR id = DialogBoxParam(Globals.hInstance,
                                 MAKEINTRESOURCE(IDD_CYCLICREPLACE), Globals.hMainWnd,
                                 DIALOG_CyclicReplace_DlgProc, (LPARAM)&data);
@@ -1383,7 +1384,7 @@ VOID DIALOG_CyclicReplace(VOID)
             Globals.find.Flags |= FR_WHOLEWORD;
         if (data.bMatchCase)
             Globals.find.Flags |= FR_MATCHCASE;
-        Globals.CyclicReplaceItems = std::move(data.items);
+        Globals.pCyclicReplaceItems = new std::vector<std::wstring>(std::move(data.items));
 
         WaitCursor(FALSE);
     }

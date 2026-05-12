@@ -94,7 +94,7 @@ typedef struct
     FINDREPLACEDX find;
     WNDPROC EditProc;
     BOOL bWasModified;
-    std::vector<std::wstring> CyclicReplaceItems;
+    std::vector<std::wstring>* pCyclicReplaceItems;
 } NOTEPAD_GLOBALS;
 
 extern NOTEPAD_GLOBALS Globals;
