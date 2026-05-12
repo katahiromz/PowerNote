@@ -1252,6 +1252,8 @@ DIALOG_CyclicReplace_OnUpdate(PCYCLIC_REPLACE pThis, HWND hwnd)
     {
         LoadStringW(Globals.hInstance, IDS_WANTTWOITEMS, text, _countof(text));
         SetDlgItemTextW(hwnd, edt1, text);
+
+        EnableWindow(GetDlgItem(hwnd, IDOK), FALSE);
     }
     else
     {
@@ -1270,6 +1272,8 @@ DIALOG_CyclicReplace_OnUpdate(PCYCLIC_REPLACE pThis, HWND hwnd)
         str += pThis->items[0];
         str += L"]";
         SetDlgItemTextW(hwnd, edt1, str.c_str());
+
+        EnableWindow(GetDlgItem(hwnd, IDOK), TRUE);
     }
 
     return TRUE;
@@ -1486,6 +1490,7 @@ static void DIALOG_ReplaceMultiple_OnUpdate(PREPLACE_MULTIPLE_AT_ONCE pThis, HWN
     {
         LoadStringW(Globals.hInstance, IDS_WANTONEITEM, text, _countof(text));
         SetDlgItemTextW(hwnd, edt1, text);
+        EnableWindow(GetDlgItem(hwnd, IDOK), FALSE);
     }
     else
     {
@@ -1513,6 +1518,8 @@ static void DIALOG_ReplaceMultiple_OnUpdate(PREPLACE_MULTIPLE_AT_ONCE pThis, HWN
 break2:
         if (!bWarning)
             SetDlgItemTextW(hwnd, edt1, L"");
+
+        EnableWindow(GetDlgItem(hwnd, IDOK), TRUE);
     }
 }
 
