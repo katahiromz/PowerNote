@@ -278,7 +278,7 @@ STRINGTABLE
     IDS_INVALID_REGEX, "Invalid regular expression"
     IDS_WANTTWOITEMS, "Please add two or more items for cyclic replacement."
     IDS_CYCLICREPLACEINFO, "We will perform the following cyclic replacement:\r\n\r\n"
-    IDS_NOTEPAD_VERSION, "PowerNote Version 1.0.0\r\n\r\nCopyright (c) 2026 katahiromz"
+    IDS_NOTEPAD_VERSION, "PowerNote Version 1.0.1\r\n\r\nCopyright (c) 2026 katahiromz"
     IDS_README, "README.txt"
     IDS_WANTONEITEM, "Please add one or more items for multiple replacement at once."
     IDS_CONFLICT, "Warning: Item %d and item %d are in conflict. Please place the longer search string on top."

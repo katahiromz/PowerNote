@@ -278,7 +278,7 @@ STRINGTABLE
     IDS_INVALID_REGEX, "正規表現が不正です"
     IDS_WANTTWOITEMS, "巡回置換用の2個以上の項目を追加してください。"
     IDS_CYCLICREPLACEINFO, "次のように巡回置換します：\r\n\r\n"
-    IDS_NOTEPAD_VERSION, "PowerNote バージョン 1.0.0\r\n\r\nCopyright (c) 2026 片山博文MZ"
+    IDS_NOTEPAD_VERSION, "PowerNote バージョン 1.0.1\r\n\r\nCopyright (c) 2026 片山博文MZ"
     IDS_README, "README_ja.txt"
     IDS_WANTONEITEM, "複数同時置換用の1個以上の項目を追加してください。"
     IDS_CONFLICT, "警告：%d番目の項目と%d番目の項目が衝突しています。長い検索文字列を上にするようにしてください。"
