@@ -82,6 +82,8 @@ static int NOTEPAD_MenuCommand(WPARAM wParam)
     case IDC_HELP_CONTENTS: DIALOG_HelpContents(); break;
     case IDC_HELP_ABOUT_NOTEPAD: DIALOG_HelpAboutNotepad(); break;
 
+    case IDC_CYCLIC_REPLACE: DIALOG_CyclicReplace(); break;
+
     default:
         break;
     }

@@ -42,6 +42,8 @@ VOID DIALOG_HelpLicense(VOID);
 VOID DIALOG_HelpNoWarranty(VOID);
 VOID DIALOG_HelpAboutNotepad(VOID);
 
+VOID DIALOG_CyclicReplace(VOID);
+
 VOID DIALOG_TimeDate(VOID);
 
 int DIALOG_StringMsgBox(HWND hParent, int formatId, LPCTSTR szString, DWORD dwFlags);

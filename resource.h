@@ -33,6 +33,7 @@
 #define IDC_PRINTING_STATUS                 524
 #define IDC_PRINTING_FILENAME               525
 #define IDC_PRINTING_PAGE                   526
+#define IDC_CYCLIC_REPLACE                  527
 
 #define IDD_PAGESETUP                       514
 #define IDD_ENCODING                        516
@@ -40,6 +41,8 @@
 #define IDD_PRINTING                        523
 #define IDD_FIND                            524
 #define IDD_REPLACE                         525
+#define IDD_CYCLICREPLACE                   526
+#define IDD_ADDITEM                         527
 
 #define IDI_NPICON                          521
 
@@ -78,9 +81,9 @@
 #define IDS_PRINTCOMPLETE                   398
 #define IDS_PRINTCANCELED                   399
 #define IDS_PRINTFAILED                     400
+#define IDS_INVALID_REGEX                   401
 #define IDS_TEXT_DOCUMENT                   512
 #define IDS_NOTEPAD_AUTHORS                 768
-#define IDS_INVALID_REGEX                   401
 
 #define ID_ACCEL                            515
 #define ID_ENCODING                         517

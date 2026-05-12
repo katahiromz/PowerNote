@@ -1104,3 +1104,7 @@ VOID DIALOG_HelpAboutNotepad(VOID)
     ShellAbout(Globals.hMainWnd, szNotepad, szNotepadAuthors,
                LoadIcon(Globals.hInstance, MAKEINTRESOURCE(IDI_NPICON)));
 }
+
+VOID DIALOG_CyclicReplace(VOID)
+{
+}
