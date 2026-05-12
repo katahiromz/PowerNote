@@ -84,8 +84,8 @@
 #define IDS_INVALID_REGEX                   401
 #define IDS_WANTTWOITEMS                    402
 #define IDS_CYCLICREPLACEINFO               403
+#define IDS_NOTEPAD_VERSION                 404
 #define IDS_TEXT_DOCUMENT                   512
-#define IDS_NOTEPAD_AUTHORS                 768
 
 #define ID_ACCEL                            515
 #define ID_ENCODING                         517

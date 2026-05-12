@@ -1099,13 +1099,17 @@ VOID DIALOG_HelpContents(VOID)
 VOID DIALOG_HelpAboutNotepad(VOID)
 {
     TCHAR szNotepad[MAX_STRING_LEN];
-    TCHAR szNotepadAuthors[MAX_STRING_LEN];
+    TCHAR szNotepadVersion[MAX_STRING_LEN];
 
     LoadString(Globals.hInstance, IDS_NOTEPAD, szNotepad, _countof(szNotepad));
-    LoadString(Globals.hInstance, IDS_NOTEPAD_AUTHORS, szNotepadAuthors, _countof(szNotepadAuthors));
+    LoadString(Globals.hInstance, IDS_NOTEPAD_VERSION, szNotepadVersion, _countof(szNotepadVersion));
 
-    ShellAbout(Globals.hMainWnd, szNotepad, szNotepadAuthors,
-               LoadIcon(Globals.hInstance, MAKEINTRESOURCE(IDI_NPICON)));
+    MSGBOXPARAMS params = { sizeof(params), Globals.hMainWnd, Globals.hInstance };
+    params.lpszText = szNotepadVersion;
+    params.lpszCaption = szNotepad;
+    params.dwStyle = MB_USERICON | MB_OK;
+    params.lpszIcon = MAKEINTRESOURCE(IDI_NPICON);
+    MessageBoxIndirect(&params);
 }
 
 typedef struct CYCLIC_REPLACE
