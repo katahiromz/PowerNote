@@ -55,8 +55,8 @@ IDI_NPICON ICON "res/Icon_521.ico"
 // RT_VERSION
 
 1 VERSIONINFO
-FILEVERSION     1, 0, 1, 0
-PRODUCTVERSION  1, 0, 1, 0
+FILEVERSION     1, 0, 2, 0
+PRODUCTVERSION  1, 0, 2, 0
 FILEOS          0x40004
 FILETYPE        0x1
 FILESUBTYPE     0x0
@@ -67,12 +67,12 @@ FILESUBTYPE     0x0
         {
             VALUE "CompanyName", "Katayama Hirofumi MZ\0"
             VALUE "FileDescription", "PowerNote\0"
-            VALUE "FileVersion", "1.0.1\0"
+            VALUE "FileVersion", "1.0.2\0"
             VALUE "InternalName", "PowerNote\0"
             VALUE "LegalCopyright", "(C) 2026 katahiromz\0"
             VALUE "OriginalFilename", "PowerNote.exe\0"
             VALUE "ProductName", "PowerNote\0"
-            VALUE "ProductVersion", "1.0.1\0"
+            VALUE "ProductVersion", "1.0.2\0"
         }
     }
     BLOCK "VarFileInfo"

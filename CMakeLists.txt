@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.11)
 
 # project name, version, and languages
-project(PowerNote VERSION 1.0.1 LANGUAGES CXX RC)
+project(PowerNote VERSION 1.0.2 LANGUAGES CXX RC)
 
 ##############################################################################
 # Debugging

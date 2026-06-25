@@ -628,6 +628,9 @@ VOID DIALOG_EditGuid(VOID)
         pb[ib] = LOBYTE(rand());
     }
 
+    pb[7] &= 0x0F;
+    pb[7] |= 0x40;
+
     WCHAR text[MAX_PATH];
     StringFromGUID2(guid, text, _countof(text));
 

@@ -1,5 +1,7 @@
 ﻿# 変更履歴
 
+- 2026-XX-YY Ver.1.0.2
+    - GUID v4 に準拠。
 - 2026-05-14 Ver.1.0.1
     - マイナーなバグ修正。
     - 「複数同時置換」を実装。
@@ -8,6 +10,8 @@
 
 # Changelog
 
+- 2026-XX-YY Ver.1.0.2
+    - Compliant with GUID v4.
 - 2026-05-14 Ver.1.0.1
     - Minor bug fixes.
     - Implemented "Replace multiple at once".
