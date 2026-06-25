@@ -586,6 +586,11 @@ NOTEPAD_WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             GlobalFree(Globals.hDevMode);
         if (Globals.hDevNames)
             GlobalFree(Globals.hDevNames);
+        if (Globals.hwndFindReplaceSpecial)
+        {
+            DestroyWindow(Globals.hwndFindReplaceSpecial);
+            Globals.hwndFindReplaceSpecial = NULL;
+        }
         SetWindowLongPtr(Globals.hEdit, GWLP_WNDPROC, (LONG_PTR)Globals.EditProc);
         NOTEPAD_SaveSettingsToRegistry();
         PostQuitMessage(0);
@@ -849,6 +854,12 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE prev, LPTSTR cmdline, int sh
 
     while (GetMessage(&msg, NULL, 0, 0))
     {
+        if (Globals.hwndFindReplaceSpecial &&
+            IsDialogMessage(Globals.hwndFindReplaceSpecial, &msg))
+        {
+            continue;
+        }
+
         if ((!Globals.hFindReplaceDlg || !IsDialogMessage(Globals.hFindReplaceDlg, &msg)) &&
             !TranslateAccelerator(Globals.hMainWnd, hAccel, &msg))
         {

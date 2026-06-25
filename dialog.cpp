@@ -815,9 +815,16 @@ typedef HWND (WINAPI *FINDPROC)(LPFINDREPLACE lpfr);
 
 static VOID DIALOG_SearchDialog(FINDPROC pfnProc)
 {
-    if (Globals.hFindReplaceDlg != NULL)
+    if (Globals.hFindReplaceDlg)
     {
+        SendMessage(Globals.hFindReplaceDlg, DM_REPOSITION, 0, 0);
         SetFocus(Globals.hFindReplaceDlg);
+        return;
+    }
+    if (Globals.hwndFindReplaceSpecial)
+    {
+        SendMessage(Globals.hwndFindReplaceSpecial, DM_REPOSITION, 0, 0);
+        SetFocus(Globals.hwndFindReplaceSpecial);
         return;
     }
 
@@ -1306,6 +1313,15 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
             return TRUE;
         }
+        case WM_DESTROY:
+        {
+            delete Globals.pCyclicReplaceItems;
+            Globals.pCyclicReplaceItems = new std::vector<std::wstring>(std::move(s_pThis->items));
+            if (Globals.hwndFindReplaceSpecial == hwnd)
+                Globals.hwndFindReplaceSpecial = NULL;
+            delete s_pThis;
+            s_pThis = NULL;
+        }
         case WM_COMMAND:
         {
             switch (LOWORD(wParam))
@@ -1315,11 +1331,39 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     s_pThis->bMatchCase = IsDlgButtonChecked(hwnd, chx1) == BST_CHECKED;
                     s_pThis->bWholeWord = IsDlgButtonChecked(hwnd, chx2) == BST_CHECKED;
                     DIALOG_CyclicReplace_OnUpdate(s_pThis, hwnd);
-                    EndDialog(hwnd, IDOK);
+
+                    {
+                        WaitCursor(TRUE);
+
+                        FINDREPLACEDX find = Globals.find;
+                        find.lStructSize = sizeof(FINDREPLACEW);
+                        find.hwndOwner = Globals.hMainWnd;
+                        find.lpstrFindWhat = &s_pThis->strFind[0];
+                        find.wFindWhatLen = (WORD)lstrlenW(find.lpstrFindWhat);
+                        find.lpstrReplaceWith = &s_pThis->strReplace[0];
+                        find.wReplaceWithLen = (WORD)lstrlenW(find.lpstrReplaceWith);
+                        find.bRegExp = TRUE;
+                        find.bCyclic = TRUE;
+                        find.bMultiple = FALSE;
+                        find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+                        find.Flags |= FR_DOWN;
+                        if (s_pThis->bMatchCase)
+                            find.Flags |= FR_MATCHCASE;
+
+                        NOTEPAD_ReplaceAll(&find);
+
+                        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+                        if (s_pThis->bWholeWord)
+                            Globals.find.Flags |= FR_WHOLEWORD;
+                        if (s_pThis->bMatchCase)
+                            Globals.find.Flags |= FR_MATCHCASE;
+
+                        WaitCursor(FALSE);
+                    }
                     break;
                 }
                 case IDCANCEL:
-                    EndDialog(hwnd, IDCANCEL);
+                    DestroyWindow(hwnd);
                     break;
                 case psh2: // Add Item
                 {
@@ -1400,45 +1444,30 @@ DIALOG_CyclicReplace_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 VOID DIALOG_CyclicReplace(VOID)
 {
-    CYCLIC_REPLACE data;
-    data.bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
-    data.bMatchCase = !!(Globals.find.Flags & FR_MATCHCASE);
-    if (Globals.pCyclicReplaceItems)
-        data.items = *Globals.pCyclicReplaceItems;
-    INT_PTR id = DialogBoxParam(Globals.hInstance,
-                                MAKEINTRESOURCE(IDD_CYCLICREPLACE), Globals.hMainWnd,
-                                DIALOG_CyclicReplace_DlgProc, (LPARAM)&data);
-    if (id == IDOK)
+    if (IsWindow(Globals.hFindReplaceDlg))
     {
-        WaitCursor(TRUE);
-
-        FINDREPLACEDX find = Globals.find;
-        find.lStructSize = sizeof(FINDREPLACEW);
-        find.hwndOwner = Globals.hMainWnd;
-        find.lpstrFindWhat = &data.strFind[0];
-        find.wFindWhatLen = (WORD)lstrlenW(find.lpstrFindWhat);
-        find.lpstrReplaceWith = &data.strReplace[0];
-        find.wReplaceWithLen = (WORD)lstrlenW(find.lpstrReplaceWith);
-        find.bRegExp = TRUE;
-        find.bCyclic = TRUE;
-        find.bMultiple = FALSE;
-        find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
-        find.Flags |= FR_DOWN;
-        if (data.bMatchCase)
-            find.Flags |= FR_MATCHCASE;
-
-        NOTEPAD_ReplaceAll(&find);
-
-        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
-        if (data.bWholeWord)
-            Globals.find.Flags |= FR_WHOLEWORD;
-        if (data.bMatchCase)
-            Globals.find.Flags |= FR_MATCHCASE;
-        delete Globals.pCyclicReplaceItems;
-        Globals.pCyclicReplaceItems = new std::vector<std::wstring>(std::move(data.items));
-
-        WaitCursor(FALSE);
+        SendMessage(Globals.hFindReplaceDlg, DM_REPOSITION, 0, 0);
+        SetFocus(Globals.hFindReplaceDlg);
+        return;
     }
+    if (Globals.hwndFindReplaceSpecial)
+    {
+        SendMessage(Globals.hwndFindReplaceSpecial, DM_REPOSITION, 0, 0);
+        SetFocus(Globals.hwndFindReplaceSpecial);
+        return;
+    }
+
+    PCYCLIC_REPLACE data = new CYCLIC_REPLACE;
+    data->bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
+    data->bMatchCase = !!(Globals.find.Flags & FR_MATCHCASE);
+    if (Globals.pCyclicReplaceItems)
+        data->items = *Globals.pCyclicReplaceItems;
+    Globals.hwndFindReplaceSpecial = CreateDialogParam(Globals.hInstance,
+                                                       MAKEINTRESOURCE(IDD_CYCLICREPLACE),
+                                                       Globals.hMainWnd,
+                                                       DIALOG_CyclicReplace_DlgProc,
+                                                       (LPARAM)data);
+    ShowWindow(Globals.hwndFindReplaceSpecial, SW_SHOWNORMAL);
 }
 
 typedef struct REPLACE_MULTIPLE_AT_ONCE
@@ -1582,7 +1611,7 @@ DIALOG_ReplaceMultiple_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
     switch (uMsg)
     {
-    case WM_INITDIALOG:
+        case WM_INITDIALOG:
         {
             s_pThis = (PREPLACE_MULTIPLE_AT_ONCE)lParam;
             SendDlgItemMessage(hwnd, lst1, LB_SETITEMHEIGHT, 0, 24);
@@ -1600,6 +1629,17 @@ DIALOG_ReplaceMultiple_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             DIALOG_ReplaceMultiple_OnUpdate(s_pThis, hwnd);
             return TRUE;
         }
+        case WM_DESTROY:
+        {
+            delete Globals.pReplaceMultipleAtOnceItems;
+            Globals.pReplaceMultipleAtOnceItems =
+                new std::vector<std::pair<std::wstring, std::wstring> >(std::move(s_pThis->pairs));
+            if (Globals.hwndFindReplaceSpecial == hwnd)
+                Globals.hwndFindReplaceSpecial = NULL;
+            delete s_pThis;
+            s_pThis = NULL;
+            break;
+        }
         case WM_COMMAND:
         {
             switch (LOWORD(wParam))
@@ -1609,11 +1649,39 @@ DIALOG_ReplaceMultiple_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                     s_pThis->bMatchCase = IsDlgButtonChecked(hwnd, chx1) == BST_CHECKED;
                     s_pThis->bWholeWord = IsDlgButtonChecked(hwnd, chx2) == BST_CHECKED;
                     DIALOG_ReplaceMultiple_OnUpdate(s_pThis, hwnd);
-                    EndDialog(hwnd, IDOK);
+
+                    {
+                        WaitCursor(TRUE);
+
+                        FINDREPLACEDX find = Globals.find;
+                        find.lStructSize = sizeof(FINDREPLACEW);
+                        find.hwndOwner = Globals.hMainWnd;
+                        find.lpstrFindWhat = &s_pThis->strFind[0];
+                        find.wFindWhatLen = (WORD)lstrlenW(find.lpstrFindWhat);
+                        find.lpstrReplaceWith = &s_pThis->strReplace[0];
+                        find.wReplaceWithLen = (WORD)lstrlenW(find.lpstrReplaceWith);
+                        find.bRegExp = TRUE;
+                        find.bCyclic = FALSE;
+                        find.bMultiple = TRUE;
+                        find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+                        find.Flags |= FR_DOWN;
+                        if (s_pThis->bMatchCase)
+                            find.Flags |= FR_MATCHCASE;
+
+                        NOTEPAD_ReplaceAll(&find);
+
+                        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
+                        if (s_pThis->bWholeWord)
+                            Globals.find.Flags |= FR_WHOLEWORD;
+                        if (s_pThis->bMatchCase)
+                            Globals.find.Flags |= FR_MATCHCASE;
+
+                        WaitCursor(FALSE);
+                    }
                     break;
                 }
                 case IDCANCEL:
-                    EndDialog(hwnd, IDCANCEL);
+                    DestroyWindow(hwnd);
                     break;
                 case psh2: // Add Item
                 {
@@ -1695,44 +1763,28 @@ DIALOG_ReplaceMultiple_DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 VOID DIALOG_ReplaceMultipleAtOnce(VOID)
 {
-    REPLACE_MULTIPLE_AT_ONCE data;
-    data.bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
-    data.bMatchCase = !!(Globals.find.Flags & FR_MATCHCASE);
-    if (Globals.pReplaceMultipleAtOnceItems)
-        data.pairs = *Globals.pReplaceMultipleAtOnceItems;
-    INT_PTR id = DialogBoxParam(Globals.hInstance,
-                                MAKEINTRESOURCE(IDD_REPLACEMULTIPLEATONCE), Globals.hMainWnd,
-                                DIALOG_ReplaceMultiple_DlgProc, (LPARAM)&data);
-    if (id == IDOK)
+    if (Globals.hFindReplaceDlg)
     {
-        WaitCursor(TRUE);
-
-        FINDREPLACEDX find = Globals.find;
-        find.lStructSize = sizeof(FINDREPLACEW);
-        find.hwndOwner = Globals.hMainWnd;
-        find.lpstrFindWhat = &data.strFind[0];
-        find.wFindWhatLen = (WORD)lstrlenW(find.lpstrFindWhat);
-        find.lpstrReplaceWith = &data.strReplace[0];
-        find.wReplaceWithLen = (WORD)lstrlenW(find.lpstrReplaceWith);
-        find.bRegExp = TRUE;
-        find.bCyclic = FALSE;
-        find.bMultiple = TRUE;
-        find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
-        find.Flags |= FR_DOWN;
-        if (data.bMatchCase)
-            find.Flags |= FR_MATCHCASE;
-
-        NOTEPAD_ReplaceAll(&find);
-
-        Globals.find.Flags &= ~(FR_WHOLEWORD | FR_MATCHCASE);
-        if (data.bWholeWord)
-            Globals.find.Flags |= FR_WHOLEWORD;
-        if (data.bMatchCase)
-            Globals.find.Flags |= FR_MATCHCASE;
-
-        delete Globals.pReplaceMultipleAtOnceItems;
-        Globals.pReplaceMultipleAtOnceItems = new std::vector<std::pair<std::wstring, std::wstring> >(std::move(data.pairs));
-
-        WaitCursor(FALSE);
+        SendMessage(Globals.hFindReplaceDlg, DM_REPOSITION, 0, 0);
+        SetFocus(Globals.hFindReplaceDlg);
+        return;
     }
+    if (Globals.hwndFindReplaceSpecial)
+    {
+        SendMessage(Globals.hwndFindReplaceSpecial, DM_REPOSITION, 0, 0);
+        SetFocus(Globals.hwndFindReplaceSpecial);
+        return;
+    }
+
+    PREPLACE_MULTIPLE_AT_ONCE data = new REPLACE_MULTIPLE_AT_ONCE;
+    data->bWholeWord = !!(Globals.find.Flags & FR_WHOLEWORD);
+    data->bMatchCase = !!(Globals.find.Flags & FR_MATCHCASE);
+    if (Globals.pReplaceMultipleAtOnceItems)
+        data->pairs = *Globals.pReplaceMultipleAtOnceItems;
+    Globals.hwndFindReplaceSpecial = CreateDialogParam(Globals.hInstance,
+                                                       MAKEINTRESOURCE(IDD_REPLACEMULTIPLEATONCE),
+                                                       Globals.hMainWnd,
+                                                       DIALOG_ReplaceMultiple_DlgProc,
+                                                       (LPARAM)data);
+    ShowWindow(Globals.hwndFindReplaceSpecial, SW_SHOWNORMAL);
 }
