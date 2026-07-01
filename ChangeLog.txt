@@ -1,6 +1,6 @@
 ﻿# 変更履歴
 
-- 2026-XX-YY Ver.1.0.2
+- 2026-07-01 Ver.1.0.2
     - CoCreateGuid関数を使ってGUID生成を修正。
     - 検索／置換ダイアログをモードレスにした。
 - 2026-05-14 Ver.1.0.1
@@ -11,7 +11,7 @@
 
 # Changelog
 
-- 2026-XX-YY Ver.1.0.2
+- 2026-07-01 Ver.1.0.2
     - Fixed GUID generation by using CoCreateGuid function.
     - Made find/replace dialogs modeless.
 - 2026-05-14 Ver.1.0.1
